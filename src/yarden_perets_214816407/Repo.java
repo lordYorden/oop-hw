@@ -1,8 +1,10 @@
 package yarden_perets_214816407;
 
-import java.util.Scanner;
+//import java.util.Scanner;
 
 public class Repo {
+	
+	public enum ArrayControl{Sucsses, OutOfBounds, Empty, InvalidObject}
 
 	private String[] answers;
 	private Question[] questions;
@@ -63,12 +65,16 @@ public class Repo {
 
 		questions[numQuestions++] = queToAdd;
 
-		Answer[] answers = queToAdd.getAnswers();
-		int numAnswers = queToAdd.getNumAnswers();
+		if(queToAdd instanceof MultiSelectQuestion) {
+			MultiSelectQuestion multiQ = (MultiSelectQuestion) queToAdd;
+			Answer[] answers = multiQ.getAnswers();
+			int numAnswers = multiQ.getNumAnswers();
 
-		for (int i = 0; i < numAnswers; i++) {
-			this.addAnswer(answers[i].getText());
+			for (int i = 0; i < numAnswers; i++) {
+				this.addAnswer(answers[i].getText());
+			}
 		}
+		
 		return true;
 	}
 
@@ -135,7 +141,7 @@ public class Repo {
 		for (int i = 0; i < numQuestions; i++) {
 			builder.append(i + 1);
 			builder.append(". ");
-			builder.append(questions[i].toString(false));
+			builder.append(questions[i].toString());
 		}
 		return builder.toString();
 	}
