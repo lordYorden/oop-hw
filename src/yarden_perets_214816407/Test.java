@@ -40,7 +40,7 @@ public class Test {
 	}
 
 	/**
-	 * @param displayAnswers whether to display the aswers to every question
+	 * @param displayAnswers whether to display the answers to every question
 	 * @return object values
 	 */
 	public String toString(boolean displayAnswers) {

@@ -32,9 +32,9 @@ public class Repo {
 	 * @param ansToAdd the answer to add
 	 * @return whether the question was added
 	 */
-	public boolean addAnswer(String ansToAdd) {
+	public ArrayControl addAnswer(String ansToAdd) {
 		if (doseAnswerExist(ansToAdd)) {
-			return false;
+			return ArrayControl.InvalidObject; //dose exist
 		}
 
 		if (numAnswers >= answers.length) {
@@ -42,7 +42,7 @@ public class Repo {
 		}
 
 		answers[numAnswers++] = ansToAdd;
-		return true;
+		return ArrayControl.Sucsses;
 	}
 
 	/**
@@ -51,9 +51,9 @@ public class Repo {
 	 * @param queToAdd the question to add
 	 * @return whether the answer was added
 	 */
-	public boolean addQuestion(Question queToAdd) {
+	public ArrayControl addQuestion(Question queToAdd) {
 		if (queToAdd == null)
-			return false;
+			return ArrayControl.InvalidObject;
 
 		if (questions == null) {
 			this.questions = new Question[1];
@@ -75,7 +75,7 @@ public class Repo {
 			}
 		}
 		
-		return true;
+		return ArrayControl.Sucsses;
 	}
 
 	/**
@@ -113,19 +113,19 @@ public class Repo {
 	 * @param index the question to remove index
 	 * @return whether the question was removed
 	 */
-	public boolean deleteQuestionByIndex(int index) {
+	public ArrayControl deleteQuestionByIndex(int index) {
 		if (numQuestions <= 0 && questions != null) {
 			//System.out.println("Error! No more answers left to remove!");
-			return false;
+			return ArrayControl.Empty;
 		}
 
 		if (numQuestions <= index || index < 0) {
-			return false;
+			return ArrayControl.OutOfBounds;
 		}
 
 		questions[index] = questions[--numQuestions];
 		questions[numQuestions] = null;
-		return true;
+		return ArrayControl.Sucsses;
 	}
 
 	/**

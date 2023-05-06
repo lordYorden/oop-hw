@@ -93,16 +93,16 @@ public class MultiSelectQuestion extends Question {
 	 * @param ansToAdd	answer given 
 	 * @return whether the answer was added 
 	 */
-	public boolean addAnswer(Answer ansToAdd) {
+	public Repo.ArrayControl addAnswer(Answer ansToAdd) {
 		if (numAnswers >= answers.length) {
-			return false;
+			return Repo.ArrayControl.OutOfBounds; //array full
 		}
 
 		answers[numAnswers++] = ansToAdd;
 		if(ansToAdd.isCorrect()) {
 			numCorrect++;
 		}
-		return true;
+		return Repo.ArrayControl.Sucsses;
 	}
 	
 	/**
@@ -110,14 +110,14 @@ public class MultiSelectQuestion extends Question {
 	 * @param index	 answer to be deleted
 	 * @return whether the answer was deleted
 	 */
-	public boolean deleteAnswerByIndex(int index) {
+	public Repo.ArrayControl deleteAnswerByIndex(int index) {
 		if (numAnswers <= 0 && answers != null) {
 			//System.out.println("Error! No more answers left to remove!");
-			return false;
+			return Repo.ArrayControl.Empty;
 		}
 		
 		if(numAnswers <= index || index < 0) {
-			return false;
+			return Repo.ArrayControl.OutOfBounds;
 		}
 		
 		if(answers[index].isCorrect())
@@ -125,6 +125,6 @@ public class MultiSelectQuestion extends Question {
 		
 		answers[index] = answers[--numAnswers];
 		answers[numAnswers] = null;
-		return true;
+		return Repo.ArrayControl.Sucsses;
 	}
 }
