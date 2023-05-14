@@ -1,10 +1,12 @@
 package yarden_perets_214816407;
 
+import java.util.Arrays;
+
+//import java.util.Arrays;
+
 //import java.util.Scanner;
 
 public class Repo {
-	
-	public enum ArrayControl{Sucsses, OutOfBounds, Empty, InvalidObject}
 
 	private String[] answers;
 	private Question[] questions;
@@ -32,9 +34,9 @@ public class Repo {
 	 * @param ansToAdd the answer to add
 	 * @return whether the question was added
 	 */
-	public ArrayControl addAnswer(String ansToAdd) {
+	public boolean addAnswer(String ansToAdd) {
 		if (doseAnswerExist(ansToAdd)) {
-			return ArrayControl.InvalidObject; //dose exist
+			return false; //dose exist
 		}
 
 		if (numAnswers >= answers.length) {
@@ -42,7 +44,7 @@ public class Repo {
 		}
 
 		answers[numAnswers++] = ansToAdd;
-		return ArrayControl.Sucsses;
+		return true;
 	}
 
 	/**
@@ -51,9 +53,9 @@ public class Repo {
 	 * @param queToAdd the question to add
 	 * @return whether the answer was added
 	 */
-	public ArrayControl addQuestion(Question queToAdd) {
+	public boolean addQuestion(Question queToAdd) {
 		if (queToAdd == null)
-			return ArrayControl.InvalidObject;
+			return false;
 
 		if (questions == null) {
 			this.questions = new Question[1];
@@ -73,21 +75,24 @@ public class Repo {
 			for (int i = 0; i < numAnswers; i++) {
 				this.addAnswer(answers[i].getText());
 			}
+		}else if (queToAdd instanceof OpenEndedQuestion) {
+			this.addAnswer(((OpenEndedQuestion)queToAdd).getSolution());
 		}
 		
-		return ArrayControl.Sucsses;
+		return true;
 	}
 
 	/**
 	 * Checks if the index entered is valid then return null/The question based on
 	 * it
 	 * 
-	 * @param index The question index
+	 * @param id The question id
 	 * @return The question object
 	 */
-	public Question getQuestionByIndex(int index) {
-		if (questions != null && (index < numQuestions && index >= 0)) {
-			return questions[index];
+	public Question getQuestionByID(int id) {
+		for(Question curr: questions) {
+			if(curr.getId() == id)
+				return curr;
 		}
 		return null;
 	}
@@ -110,22 +115,19 @@ public class Repo {
 	 * delete the question in the array by replacing it with the end and nullifying
 	 * it
 	 * 
-	 * @param index the question to remove index
+	 * @param id the question to remove id
 	 * @return whether the question was removed
 	 */
-	public ArrayControl deleteQuestionByIndex(int index) {
-		if (numQuestions <= 0 && questions != null) {
-			//System.out.println("Error! No more answers left to remove!");
-			return ArrayControl.Empty;
+	public boolean deleteQuestionById(int id) {
+		
+		for(int i = 0; i < numQuestions; i++) {
+			if(questions[i].getId() == id) {
+				questions[i] = questions[--numQuestions];
+				questions[numQuestions] = null;
+				return true;
+			}
 		}
-
-		if (numQuestions <= index || index < 0) {
-			return ArrayControl.OutOfBounds;
-		}
-
-		questions[index] = questions[--numQuestions];
-		questions[numQuestions] = null;
-		return ArrayControl.Sucsses;
+		return false;
 	}
 
 	/**
@@ -137,10 +139,12 @@ public class Repo {
 		if (numQuestions == 0 || questions == null)
 			return "There are no question in the repo!\n";
 
-		builder.append("Questions in the repo: \n");
+		builder.append("Questions in the repo: \n\n");
+		//builder.append(Arrays.toString(questions));
 		for (int i = 0; i < numQuestions; i++) {
-			builder.append(i + 1);
-			builder.append(". ");
+//			builder.append(i + 1);
+//			builder.append(". ");
+			questions[i].setDisplaySolution(false);
 			builder.append(questions[i].toString());
 		}
 		return builder.toString();
@@ -227,6 +231,18 @@ public class Repo {
 	 */
 	public Answer[] generateDefaultAnswers(boolean noneCorrect, boolean moreThenOneCorrect) {
 		return new Answer[] { new Answer(answers[0], noneCorrect), new Answer(answers[1], moreThenOneCorrect) };
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Repo))
+			return false;
+		
+		Repo other = (Repo) obj;
+		
+		if(this.numAnswers != other.numAnswers || this.numQuestions != other.numQuestions)
+			return false;
+		return Arrays.equals(this.answers, other.answers) && Arrays.equals(this.questions, other.questions);
 	}
 
 }

@@ -1,5 +1,7 @@
 package yarden_perets_214816407;
 
+import java.util.Arrays;
+
 public class MultiSelectQuestion extends Question {
 	private int numAnswers;
 	private Answer[] answers;
@@ -53,23 +55,23 @@ public class MultiSelectQuestion extends Question {
 		return numCorrect;
 	}
 
-	/**
-	 * @param displayAnswers whether to display the answers to every question
-	 * @return object values
-	 */
-	public String toStringSolution() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(super.toString());
-
-		for (int i = 0; i < numAnswers; i++) {
-			builder.append("\s\s\s");
-			builder.append((char)('A'+i));
-			builder.append(". ");
-			builder.append(answers[i].toString(true));
-		}
-		builder.append("\n");
-		return builder.toString();
-	}
+//	/**
+//	 * @param displayAnswers whether to display the answers to every question
+//	 * @return object values
+//	 */
+//	public String toStringSolution() {
+//		StringBuilder builder = new StringBuilder();
+//		builder.append(super.toString());
+//
+//		for (int i = 0; i < numAnswers; i++) {
+//			builder.append("\s\s\s");
+//			builder.append((char)('A'+i));
+//			builder.append(". ");
+//			builder.append(answers[i].toString(true));
+//		}
+//		builder.append("\n");
+//		return builder.toString();
+//	}
 	
 	/**
 	 * @return object values
@@ -81,7 +83,8 @@ public class MultiSelectQuestion extends Question {
 		for (int i = 0; i < numAnswers; i++) {
 			builder.append(i + 1);
 			builder.append(". ");
-			builder.append(answers[i].toString(false));
+			answers[i].setDisplaySolution(displaySolution);
+			builder.append(answers[i].toString());
 		}
 		builder.append("\n");
 		return builder.toString();
@@ -93,16 +96,16 @@ public class MultiSelectQuestion extends Question {
 	 * @param ansToAdd	answer given 
 	 * @return whether the answer was added 
 	 */
-	public Repo.ArrayControl addAnswer(Answer ansToAdd) {
+	public boolean addAnswer(Answer ansToAdd) {
 		if (numAnswers >= answers.length) {
-			return Repo.ArrayControl.OutOfBounds; //array full
+			return false;//array full
 		}
 
 		answers[numAnswers++] = ansToAdd;
 		if(ansToAdd.isCorrect()) {
 			numCorrect++;
 		}
-		return Repo.ArrayControl.Sucsses;
+		return true;
 	}
 	
 	/**
@@ -110,14 +113,14 @@ public class MultiSelectQuestion extends Question {
 	 * @param index	 answer to be deleted
 	 * @return whether the answer was deleted
 	 */
-	public Repo.ArrayControl deleteAnswerByIndex(int index) {
+	public boolean deleteAnswerByIndex(int index) {
 		if (numAnswers <= 0 && answers != null) {
 			//System.out.println("Error! No more answers left to remove!");
-			return Repo.ArrayControl.Empty;
+			return false;
 		}
 		
 		if(numAnswers <= index || index < 0) {
-			return Repo.ArrayControl.OutOfBounds;
+			return false;
 		}
 		
 		if(answers[index].isCorrect())
@@ -125,6 +128,15 @@ public class MultiSelectQuestion extends Question {
 		
 		answers[index] = answers[--numAnswers];
 		answers[numAnswers] = null;
-		return Repo.ArrayControl.Sucsses;
+		return true;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof MultiSelectQuestion))
+			return false;
+		
+		MultiSelectQuestion que = (MultiSelectQuestion) obj;
+		return super.equals(obj) && Arrays.equals(que.answers, this.answers);
 	}
 }

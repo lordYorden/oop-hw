@@ -3,11 +3,12 @@ package yarden_perets_214816407;
 public class Question {
 	
 	public enum Difficulty {Easy, Moderate, Hard}
-	private static int numQuestions;
+	private static int numQuestions = 1;
 	
 	protected String text;
 	protected int id;
 	protected Difficulty difficulty;
+	protected boolean displaySolution;
 
 	/**
 	 * C'tor
@@ -18,6 +19,7 @@ public class Question {
 		this.text = text;
 		this.id = numQuestions++;
 		this.difficulty = difficulty;
+		this.displaySolution = false;
 	}
 
 	/**
@@ -30,6 +32,13 @@ public class Question {
 	}
 
 	/**
+	 * @param displaySolution wheather 
+	 */
+	public void setDisplaySolution(boolean displaySolution) {
+		this.displaySolution = displaySolution;
+	}
+
+	/**
 	 * @return the question itself
 	 */
 	public String getText() {
@@ -37,16 +46,34 @@ public class Question {
 	}
 	
 	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**
 	 * @return object values
 	 */
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append(id + ". ");
 		builder.append(text);
+		builder.append("\n");
+		builder.append("ID: " + id);
 		builder.append("\n");
 		builder.append("Difficulty: ");
 		builder.append(difficulty.name());
 		builder.append("\n");
 		return builder.toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Question))
+			return false;
+		
+		Question que = (Question) obj;
+		
+		return que.id == this.id && que.text == this.text && this.difficulty == que.difficulty;
 	}
 }
