@@ -3,6 +3,7 @@ package yarden_perets_214816407;
 public class Answer {
 	private String text;
 	private boolean isCorrect;
+	private boolean displaySolution;
 
 	/**
 	 * C'tor
@@ -13,6 +14,7 @@ public class Answer {
 	public Answer(String answer, boolean isCorrect) {
 		this.text = answer;
 		this.isCorrect = isCorrect;
+		this.displaySolution = false;
 	}
 
 	/**
@@ -22,6 +24,13 @@ public class Answer {
 	 */
 	public Answer(Answer other) {
 		this(other.text, other.isCorrect);
+	}
+
+	/**
+	 * @param displaySolution the displaySolution to set
+	 */
+	public void setDisplaySolution(boolean displaySolution) {
+		this.displaySolution = displaySolution;
 	}
 
 	/**
@@ -46,14 +55,13 @@ public class Answer {
 	}
 
 	/**
-	 * @param displayAnswers whether to display the answers (true/false)
-	 * @return object values
+	 * @return toString
 	 */
-	public String toString(boolean displayAnswer) {
+	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		// builder.append("answer: ");
 		builder.append(text);
-		if (displayAnswer) {
+		if (displaySolution) {
 			builder.append(" [");
 			builder.append(isCorrect ? "x" : " ");
 			builder.append("]");
@@ -61,6 +69,15 @@ public class Answer {
 
 		builder.append("\n");
 		return builder.toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Answer))
+			return false;
+		
+		Answer ans = (Answer) obj;
+		return (ans.text == this.text) && (ans.isCorrect == this.isCorrect);
 	}
 
 }

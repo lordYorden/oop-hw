@@ -1,21 +1,25 @@
 package yarden_perets_214816407;
 
 public class Question {
-	private String text;
-	private int numAnswers;
-	private Answer[] answers;
-	private int numCorrect;
+	
+	public enum Difficulty {Easy, Moderate, Hard}
+	private static int numQuestions = 1;
+	
+	protected String text;
+	protected int id;
+	protected Difficulty difficulty;
+	protected boolean displaySolution;
 
 	/**
 	 * C'tor
 	 * 
 	 * @param	text the question itself
 	 */
-	Question(String text) {
+	Question(String text, Difficulty difficulty) {
 		this.text = text;
-		this.numAnswers = 0;
-		this.numCorrect = 0;
-		this.answers = new Answer[10];
+		this.id = numQuestions++;
+		this.difficulty = difficulty;
+		this.displaySolution = false;
 	}
 
 	/**
@@ -24,13 +28,14 @@ public class Question {
 	 * @param other   object to copy
 	 */
 	Question(Question other) {
-		this.text = other.text;
-		this.numCorrect = other.numCorrect;
-		this.numAnswers = other.numAnswers;
-		this.answers = new Answer[10];
-		for (int i = 0; i < other.numAnswers; i++) {
-			this.answers[i] = new Answer(other.answers[i]);
-		}
+		this(other.text, other.difficulty);
+	}
+
+	/**
+	 * @param displaySolution wheather 
+	 */
+	public void setDisplaySolution(boolean displaySolution) {
+		this.displaySolution = displaySolution;
 	}
 
 	/**
@@ -39,47 +44,14 @@ public class Question {
 	public String getText() {
 		return text;
 	}
-
-	/**
-	 * @return the question's possible answers
-	 */
-	public Answer[] getAnswers() {
-		return answers;
-	}
-
-	/**
-	 * @return number of possible answers
-	 */
-	public int getNumAnswers() {
-		return numAnswers;
-	}
 	
 	/**
-	 * @return the number of correct answers
+	 * @return the id
 	 */
-	public int getNumCorrect() {
-		return numCorrect;
+	public int getId() {
+		return id;
 	}
 
-	/**
-	 * @param displayAnswers whether to display the answers to every question
-	 * @return object values
-	 */
-	public String toString(boolean displayAnswers) {
-		StringBuilder builder = new StringBuilder();
-		builder.append(text);
-		builder.append("\n");
-
-		for (int i = 0; i < numAnswers; i++) {
-			builder.append("\s\s\s");
-			builder.append((char)('A'+i));
-			builder.append(". ");
-			builder.append(answers[i].toString(displayAnswers));
-		}
-		builder.append("\n");
-		return builder.toString();
-	}
-	
 	/**
 	 * @return object values
 	 */
@@ -87,54 +59,21 @@ public class Question {
 		StringBuilder builder = new StringBuilder();
 		builder.append(text);
 		builder.append("\n");
-
-		for (int i = 0; i < numAnswers; i++) {
-			builder.append(i + 1);
-			builder.append(". ");
-			builder.append(answers[i].toString(false));
-		}
+		builder.append("ID: " + id);
+		builder.append("\n");
+		builder.append("Difficulty: ");
+		builder.append(difficulty.name());
 		builder.append("\n");
 		return builder.toString();
 	}
-
-	/**
-	 * adds and aswers to the question's possible answers
-	 * 
-	 * @param ansToAdd	answer given 
-	 * @return whether the answer was added 
-	 */
-	public boolean addAnswer(Answer ansToAdd) {
-		if (numAnswers >= answers.length) {
-			return false;
-		}
-
-		answers[numAnswers++] = ansToAdd;
-		if(ansToAdd.isCorrect()) {
-			numCorrect++;
-		}
-		return true;
-	}
 	
-	/**
-	 * deletes an answer 
-	 * @param index	 answer to be deleted
-	 * @return whether the answer was deleted
-	 */
-	public boolean deleteAnswerByIndex(int index) {
-		if (numAnswers <= 0 && answers != null) {
-			//System.out.println("Error! No more answers left to remove!");
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Question))
 			return false;
-		}
 		
-		if(numAnswers <= index || index < 0) {
-			return false;
-		}
+		Question que = (Question) obj;
 		
-		if(answers[index].isCorrect())
-			numCorrect--;
-		
-		answers[index] = answers[--numAnswers];
-		answers[numAnswers] = null;
-		return true;
+		return que.id == this.id && que.text == this.text && this.difficulty == que.difficulty;
 	}
 }

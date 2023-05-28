@@ -5,11 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 public class Test {
 	private String date;
 	private int currNumQue;
 	private Question[] questions;
+	private boolean displaySolution;
 
 	/**
 	 * C'tor saves the date and time the test was created
@@ -19,6 +21,7 @@ public class Test {
 	public Test(int maxNumQue) {
 		questions = new Question[maxNumQue];
 		// this.maxNumQue = maxNumQue;
+		displaySolution = false;
 		currNumQue = 0;
 		this.date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm"));
 	}
@@ -40,13 +43,14 @@ public class Test {
 	}
 
 	/**
-	 * @param displayAnswers whether to display the aswers to every question
+	 * @param displayAnswers whether to display the answers to every question
 	 * @return object values
 	 */
-	public String toString(boolean displayAnswers) {
+	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < currNumQue; i++) {
-			builder.append(questions[i].toString(displayAnswers));
+			questions[i].setDisplaySolution(displaySolution);
+			builder.append(questions[i].toString());
 		}
 //		builder.append(Arrays.toString(questions));
 //		builder.append("]");
@@ -64,9 +68,24 @@ public class Test {
 		String filePath = (displaySolution ? "solution_" : "exam_") + date + ".txt";
 		File file = new File(filePath);
 		PrintWriter pw = new PrintWriter(file);
-		pw.write(this.toString(displaySolution));
+		this.displaySolution = displaySolution;
+		pw.write(this.toString());
 		pw.close();
 		return filePath;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof Test))
+			return false;
+		
+		Test other = (Test) obj;
+		
+		if(this.currNumQue != other.currNumQue) {
+			return false;
+		}
+		
+		return Arrays.equals(this.questions, other.questions);
 	}
 
 }
