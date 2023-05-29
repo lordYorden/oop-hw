@@ -1,20 +1,34 @@
 package yarden_perets_214816407;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Scanner;
 
 import yarden_perets_214816407.Question.Difficulty;
+import yarden_perets_214816407.Repo.Subject;
 
 public class TestMaker {
 
 	public static void main(String[] args) throws IOException {
 		Scanner input = new Scanner(System.in);
-		Repo repo = new Repo();
+		
+		Subject subject = getSubjectFromUser(input);
+		Repo repo = null;//new Repo(subject);
 		final int EXIT = -1;
 		int selction = 0;
 
-		hardCoddedQue(repo);
+		try {
+			repo = loadRepo(subject);
+		} catch (ClassNotFoundException | IOException e) {
+			repo = new Repo(subject);
+		}
 
+		//hardCoddedQue(repo);
+		
 		do {
 			printMenu();
 			selction = input.nextInt();
@@ -50,6 +64,7 @@ public class TestMaker {
 				break;
 			}
 			case EXIT: {
+				saveRepo(repo);
 				System.out.println("Goodbye!");
 				break;
 			}
@@ -57,6 +72,28 @@ public class TestMaker {
 				System.out.println("Error! option dose not exist, Please try again!");
 			}
 		} while (selction != EXIT);
+		
+		saveRepo(repo);
+	}
+
+	private static Repo loadRepo(Subject subject) throws FileNotFoundException, IOException, ClassNotFoundException {
+		String filename = subject.name() + ".db";
+		ObjectInputStream toLoad = new ObjectInputStream(new FileInputStream(filename));
+		Repo repo = (Repo) toLoad.readObject();
+//		if(obj != null) {
+//			repo = (Repo) obj;
+//		} else {
+//			repo = new Repo(subject);
+//		}
+		toLoad.close();
+		return repo;
+	}
+	
+	private static void saveRepo(Repo repo) throws FileNotFoundException, IOException {
+		String filename = repo.getSubject().name() + ".db";
+		ObjectOutputStream toSave = new ObjectOutputStream(new FileOutputStream(filename));
+		toSave.writeObject(repo);
+		toSave.close();
 	}
 
 	/**
@@ -292,8 +329,8 @@ public class TestMaker {
 		multiQuestions[0].addAnswer(new Answer("1914", false));
 		multiQuestions[0].addAnswer(new Answer("1920", false));
 //		Answer: B
-		multiQuestions[1] = new MultiSelectQuestion("What is the name of the biggest technology company in South Korea?",
-				Difficulty.Easy);
+		multiQuestions[1] = new MultiSelectQuestion(
+				"What is the name of the biggest technology company in South Korea?", Difficulty.Easy);
 		multiQuestions[1].addAnswer(new Answer("Samsung", true));
 		multiQuestions[1].addAnswer(new Answer("LG", false));
 		multiQuestions[1].addAnswer(new Answer("Hyundai", false));
@@ -313,7 +350,8 @@ public class TestMaker {
 		multiQuestions[3].addAnswer(new Answer("Nickel", false));
 		multiQuestions[3].addAnswer(new Answer("Aluminium", true));
 		// Answer: D
-		multiQuestions[4] = new MultiSelectQuestion("How many breaths does the human body take daily?", Difficulty.Hard);
+		multiQuestions[4] = new MultiSelectQuestion("How many breaths does the human body take daily?",
+				Difficulty.Hard);
 		multiQuestions[4].addAnswer(new Answer("About 10,000", false));
 		multiQuestions[4].addAnswer(new Answer("About 20,000", true));
 		multiQuestions[4].addAnswer(new Answer("About 30,000", false));
@@ -326,7 +364,8 @@ public class TestMaker {
 		multiQuestions[5].addAnswer(new Answer("Robert Peel", true));
 		multiQuestions[5].addAnswer(new Answer("Lord Palmerston", false));
 		// Answer: C
-		multiQuestions[6] = new MultiSelectQuestion("What is the name of the largest desert in the world?", Difficulty.Easy);
+		multiQuestions[6] = new MultiSelectQuestion("What is the name of the largest desert in the world?",
+				Difficulty.Easy);
 		multiQuestions[6].addAnswer(new Answer("Sahara", false));
 		multiQuestions[6].addAnswer(new Answer("Gobi", false));
 		multiQuestions[6].addAnswer(new Answer("Kalahari", false));
@@ -350,30 +389,41 @@ public class TestMaker {
 		multiQuestions[9].addAnswer(new Answer("Pluviometer", true));
 		multiQuestions[9].addAnswer(new Answer("Thermometer", false));
 		// Answer: C
-		multiQuestions[10] = new MultiSelectQuestion("Which is the smallest planet in our solar system?", Difficulty.Easy);
+		multiQuestions[10] = new MultiSelectQuestion("Which is the smallest planet in our solar system?",
+				Difficulty.Easy);
 		multiQuestions[10].addAnswer(new Answer("Venus  ", false));
 		multiQuestions[10].addAnswer(new Answer("Mars   ", false));
 		multiQuestions[10].addAnswer(new Answer("Mercury", true));
 		multiQuestions[10].addAnswer(new Answer("Pluto  ", false));
 		// Answer: C
-		
 
 		for (int i = 0; i < multiQuestions.length; i++) {
 			repo.addQuestion(multiQuestions[i]);
 		}
-		
+
 		OpenEndedQuestion[] openQuestions = new OpenEndedQuestion[10];
-		openQuestions[0]= new OpenEndedQuestion("What is the capital of France?", "Paris, France", Difficulty.Easy);
-		openQuestions[1]= new OpenEndedQuestion("What is the name of the largest ocean in the world?", "Pacific Ocean", Difficulty.Easy);
-		openQuestions[2]= new OpenEndedQuestion("What is the name of the highest mountain in the world?", "Mount Everest, Nepal", Difficulty.Moderate);
-		openQuestions[3]= new OpenEndedQuestion("What is the name of the current president of the United States?", "Joe Biden, United States", Difficulty.Easy);
-		openQuestions[4]= new OpenEndedQuestion("What is the name of the first man on the moon?", "Neil Armstrong, United States", Difficulty.Easy);
-		openQuestions[5]= new OpenEndedQuestion("What is the name of the element with the atomic number 1?", "Hydrogen", Difficulty.Easy);
-		openQuestions[6]= new OpenEndedQuestion("What is the name of the force that keeps the planets in orbit around the sun?", "Gravity", Difficulty.Moderate);
-		openQuestions[7]= new OpenEndedQuestion("What is the name of the process by which plants make food from sunlight?", "Photosynthesis", Difficulty.Moderate);
-		openQuestions[8]= new OpenEndedQuestion("What is the name of the first human to fly?", "Orville Wright, United States", Difficulty.Easy);
-		openQuestions[9]= new OpenEndedQuestion("What is the name of the largest country in the world by area?", "Russia", Difficulty.Moderate);
-		
+		openQuestions[0] = new OpenEndedQuestion("What is the capital of France?", "Paris, France", Difficulty.Easy);
+		openQuestions[1] = new OpenEndedQuestion("What is the name of the largest ocean in the world?", "Pacific Ocean",
+				Difficulty.Easy);
+		openQuestions[2] = new OpenEndedQuestion("What is the name of the highest mountain in the world?",
+				"Mount Everest, Nepal", Difficulty.Moderate);
+		openQuestions[3] = new OpenEndedQuestion("What is the name of the current president of the United States?",
+				"Joe Biden, United States", Difficulty.Easy);
+		openQuestions[4] = new OpenEndedQuestion("What is the name of the first man on the moon?",
+				"Neil Armstrong, United States", Difficulty.Easy);
+		openQuestions[5] = new OpenEndedQuestion("What is the name of the element with the atomic number 1?",
+				"Hydrogen", Difficulty.Easy);
+		openQuestions[6] = new OpenEndedQuestion(
+				"What is the name of the force that keeps the planets in orbit around the sun?", "Gravity",
+				Difficulty.Moderate);
+		openQuestions[7] = new OpenEndedQuestion(
+				"What is the name of the process by which plants make food from sunlight?", "Photosynthesis",
+				Difficulty.Moderate);
+		openQuestions[8] = new OpenEndedQuestion("What is the name of the first human to fly?",
+				"Orville Wright, United States", Difficulty.Easy);
+		openQuestions[9] = new OpenEndedQuestion("What is the name of the largest country in the world by area?",
+				"Russia", Difficulty.Moderate);
+
 		for (int i = 0; i < openQuestions.length; i++) {
 			repo.addQuestion(openQuestions[i]);
 		}
@@ -447,7 +497,7 @@ public class TestMaker {
 		return ans;
 	}
 
-	//didn't use at the end
+	// didn't use at the end
 	private static String inputPargraph(Scanner input) {
 		StringBuffer buffer = new StringBuffer();
 		String s = "";
@@ -456,13 +506,12 @@ public class TestMaker {
 		do {
 
 			String line = input.nextLine();
-			if (line.equals("end"))
+			if (line.equals("end")) {
 				if (buffer.isEmpty())
 					System.out.println("Error! Noting was entered, Please try again!");
 				else
 					fin = true;
-
-			else {
+			} else {
 				buffer.append(line);
 				buffer.append("\n");
 			}
@@ -471,7 +520,6 @@ public class TestMaker {
 		return buffer.toString();
 	}
 
-	
 	/**
 	 * @param input where to read the difficulty from
 	 * @return difficulty from the user
@@ -498,6 +546,33 @@ public class TestMaker {
 
 		return difficulties[diff];
 
+	}
+
+	/**
+	 * @param input where to read the subject from
+	 * @return subject from the user
+	 */
+	private static Subject getSubjectFromUser(Scanner input) { // sad i am not allowed to use generics
+		Subject[] subjects = Subject.values();
+		int subject = 0;
+		boolean isValid = false;
+
+		do {
+			System.out.println("Select a subject: ");
+			for (Subject d : subjects) {
+				System.out.println((d.ordinal() + 1) + ". " + d.name());
+			}
+			subject = input.nextInt();
+			input.nextLine(); // clears buffer
+			subject--;
+
+			isValid = subject < subjects.length && subject >= 0;
+			if (!isValid)
+				System.out.println("Error! Subject dosen't exist, Try again!");
+
+		} while (!isValid);
+
+		return subjects[subject];
 	}
 
 }

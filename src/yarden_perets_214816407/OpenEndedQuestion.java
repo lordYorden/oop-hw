@@ -1,6 +1,8 @@
 package yarden_perets_214816407;
 
-public class OpenEndedQuestion extends Question{
+import java.io.Serializable;
+
+public class OpenEndedQuestion extends Question implements Serializable{
 
 	private String solution;
 

@@ -1,28 +1,33 @@
 package yarden_perets_214816407;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 //import java.util.Arrays;
 
 //import java.util.Scanner;
 
-public class Repo {
+public class Repo implements Serializable{
 
+	public enum Subject {Math, Science, History, Geography}
+	
 	private String[] answers;
 	private Question[] questions;
 	private int numQuestions;
 	private int numAnswers;
+	private Subject subject;
 
 	/**
 	 * C'tor
 	 * 
 	 * Creates an answer array with the 2 defualt answers in the start
 	 */
-	public Repo() {
+	public Repo(Subject subject) {
 		this.answers = new String[2];
 		this.questions = null;
 		this.numQuestions = 0;
 		this.numAnswers = 0;
+		this.subject = subject;
 		addAnswer("No answer is correct"); // answers[0]
 		addAnswer("More then one answer is correct"); // answers[1]
 	}
@@ -139,7 +144,10 @@ public class Repo {
 		if (numQuestions == 0 || questions == null)
 			return "There are no question in the repo!\n";
 
-		builder.append("Questions in the repo: \n\n");
+		builder.append("Subject: ");
+		builder.append(subject.name());
+		builder.append("\n");
+		builder.append("Questions in the repo:\n\n");
 		//builder.append(Arrays.toString(questions));
 		for (int i = 0; i < numQuestions; i++) {
 //			builder.append(i + 1);
@@ -155,6 +163,20 @@ public class Repo {
 	 */
 	public int getNumQuestions() {
 		return numQuestions;
+	}
+
+	/**
+	 * @return the subject
+	 */
+	public Subject getSubject() {
+		return subject;
+	}
+
+	/**
+	 * @param subject the subject to set
+	 */
+	public void setSubject(Subject subject) {
+		this.subject = subject;
 	}
 
 	/**
