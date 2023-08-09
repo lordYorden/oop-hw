@@ -7,18 +7,22 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
-public class Test {
+public abstract class Exam implements Examable {
 	private String date;
-	private int currNumQue;
-	private Question[] questions;
+	protected int currNumQue;
+	protected Question[] questions;
 	private boolean displaySolution;
 
 	/**
 	 * C'tor saves the date and time the test was created
 	 * 
 	 * @param maxNumQue max number of question in test
+	 * @throws NumOfQuestionsException
 	 */
-	public Test(int maxNumQue) {
+	public Exam(int maxNumQue) throws NumOfQuestionsException {
+		if (maxNumQue > 10)
+			throw new NumOfQuestionsException(maxNumQue);
+
 		questions = new Question[maxNumQue];
 		// this.maxNumQue = maxNumQue;
 		displaySolution = false;
@@ -31,15 +35,31 @@ public class Test {
 	 * 
 	 * @param queToAdd question given
 	 * @return whether the question was added
+	 * @throws NumOfQuestionsException
 	 */
-	public boolean addQuestion(Question queToAdd) {
+	public boolean addQuestion(Question queToAdd) throws NumOfQuestionsException {
 		if (currNumQue >= questions.length) {
-			System.out.println("Error! No more question could be added, reached full capacity");
-			return false;
+			throw new NumOfQuestionsException(currNumQue + 1, questions.length);
+			// System.out.println("Error! No more question could be added, reached full
+			// capacity");
 		}
 
 		questions[currNumQue++] = queToAdd;
 		return true;
+	}
+
+	public boolean addQuestion(MultiSelectQuestion queToAdd, Repo repo)
+			throws NumOfAnswersException, NumOfQuestionsException {
+		int numCorrect = queToAdd.getNumCorrect();
+		Answer[] defaults = repo.generateDefaultAnswers((numCorrect == 0), (numCorrect > 1));
+
+		int numOfAns = queToAdd.getNumAnswers();
+		if (numOfAns <= 3)
+			throw new NumOfAnswersException(numOfAns);
+
+		queToAdd.addAnswer(defaults[0]);
+		queToAdd.addAnswer(defaults[1]);
+		return addQuestion((Question) queToAdd);
 	}
 
 	/**
@@ -64,7 +84,7 @@ public class Test {
 	 * @param displaySolution exam/solution
 	 * @throws FileNotFoundException
 	 */
-	public String writeTest(boolean displaySolution) throws FileNotFoundException {
+	public String writeExam(boolean displaySolution) throws FileNotFoundException {
 		String filePath = (displaySolution ? "solution_" : "exam_") + date + ".txt";
 		File file = new File(filePath);
 		PrintWriter pw = new PrintWriter(file);
@@ -73,19 +93,22 @@ public class Test {
 		pw.close();
 		return filePath;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof Test))
+		if (!(obj instanceof Exam))
 			return false;
-		
-		Test other = (Test) obj;
-		
-		if(this.currNumQue != other.currNumQue) {
+
+		Exam other = (Exam) obj;
+
+		if (this.currNumQue != other.currNumQue) {
 			return false;
 		}
-		
+
 		return Arrays.equals(this.questions, other.questions);
 	}
+
+	@Override
+	public abstract void createExam(Repo repo);
 
 }
