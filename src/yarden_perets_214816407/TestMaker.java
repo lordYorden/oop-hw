@@ -12,11 +12,11 @@ import yarden_perets_214816407.Question.Difficulty;
 import yarden_perets_214816407.Repo.Subject;
 
 public class TestMaker {
+	static final Scanner input = new Scanner(System.in);
 
 	public static void main(String[] args) throws IOException {
-		Scanner input = new Scanner(System.in);
 
-		Subject subject = getSubjectFromUser(input);
+		Subject subject = getSubjectFromUser();
 		Repo repo = null;// new Repo(subject);
 		final int EXIT = -1;
 		int selction = 0;
@@ -27,7 +27,13 @@ public class TestMaker {
 			repo = new Repo(subject);
 		}
 
-		//hardCoddedQue(repo, subject);
+		/*
+		 * remove comment to restore lost info in the data
+		 * after you restored it please comment again in order
+		 * to not duplicate the questions in the db
+		*/
+		
+		//hardCoddedQue(repo, subject); //works even by subject enjoy :)
 
 		do {
 			printMenu();
@@ -40,27 +46,27 @@ public class TestMaker {
 				break;
 			}
 			case 2: {
-				addAnswer(repo, input);
+				addAnswer(repo);
 				break;
 			}
 			case 3: {
-				appendAnswerToQuestion(repo, input);
+				appendAnswerToQuestion(repo);
 				break;
 			}
 			case 4: {
-				addQuestion(repo, input);
+				addQuestion(repo);
 				break;
 			}
 			case 5: {
-				deleteAnswerFromAQuestion(repo, input);
+				deleteAnswerFromAQuestion(repo);
 				break;
 			}
 			case 6: {
-				deleteQuestion(repo, input);
+				deleteQuestion(repo);
 				break;
 			}
 			case 7: {
-				generateTest(repo, input);
+				generateTest(repo);
 				break;
 			}
 			case EXIT: {
@@ -105,7 +111,7 @@ public class TestMaker {
 	 * @throws IOException
 	 * @throws NumOfAnswersException
 	 */
-	public static void generateTest(Repo repo, Scanner input) throws IOException {
+	public static void generateTest(Repo repo) throws IOException {
 
 		// Scanner input = new Scanner(System.in);
 		int numQue = 0;
@@ -127,7 +133,7 @@ public class TestMaker {
 		try {
 			if (isAuto) {
 				exam = new AutomaticExam(numQue);
-				System.out.println("is auto");
+				//System.out.println("is auto");
 			} else {
 				exam = new MenualExam(numQue, input);
 			}
@@ -150,7 +156,7 @@ public class TestMaker {
 	 * 
 	 * @param repo the program's repository
 	 */
-	private static void deleteQuestion(Repo repo, Scanner input) {
+	private static void deleteQuestion(Repo repo) {
 		// Scanner input = new Scanner(System.in);
 		boolean questionExist = false;
 		int id = 0;
@@ -175,7 +181,7 @@ public class TestMaker {
 	 * 
 	 * @param repo the program's repository
 	 */
-	private static void deleteAnswerFromAQuestion(Repo repo, Scanner input) {
+	private static void deleteAnswerFromAQuestion(Repo repo) {
 		// Scanner input = new Scanner(System.in);
 		boolean answerExist = false;
 		int selection = 0;
@@ -213,7 +219,7 @@ public class TestMaker {
 	 * 
 	 * @param repo the program's repository
 	 */
-	public static void appendAnswerToQuestion(Repo repo, Scanner input) {
+	public static void appendAnswerToQuestion(Repo repo) {
 		// Scanner input = new Scanner(System.in);
 		Question que = Repo.selectQuestionFromRepo(repo, input);
 		String ans = Repo.selectAnswerFromRepo(repo, input);
@@ -238,7 +244,7 @@ public class TestMaker {
 	 * 
 	 * @param repo the program's repository
 	 */
-	private static void addQuestion(Repo repo, Scanner input) {
+	private static void addQuestion(Repo repo) {
 		// Scanner input = new Scanner(System.in);
 		String text = "";
 		// boolean res = false;;
@@ -266,7 +272,7 @@ public class TestMaker {
 
 			System.out.println("Enter a question: ");
 			text = input.nextLine();
-			Question.Difficulty diff = getDifficultyFromUser(input);
+			Question.Difficulty diff = getDifficultyFromUser();
 
 			if (selction != 0) {
 				System.out.println("Enter The school solution: ");
@@ -291,7 +297,7 @@ public class TestMaker {
 	 * 
 	 * @param repo the program's repository
 	 */
-	private static void addAnswer(Repo repo, Scanner input) {
+	private static void addAnswer(Repo repo) {
 		// Scanner input = new Scanner(System.in);
 		boolean res = true;
 		String newAnswer = "";
@@ -427,7 +433,7 @@ public class TestMaker {
 			openQuestions[7] = new OpenEndedQuestion(
 					"What is the name of the process by which plants make food from sunlight?", "Photosynthesis",
 					Difficulty.Moderate);
-		}else if(subject == subject.Math) {
+		}else if(subject == Subject.Math) {
     	  openQuestions[0] = new OpenEndedQuestion("What is the equation for the area of a circle?", "A = πr²", Difficulty.Moderate);
     	  openQuestions[1] = new OpenEndedQuestion("What is the equation for the volume of a sphere?", "V = 4/3πr³", Difficulty.Moderate);
     	  openQuestions[2] = new OpenEndedQuestion("What is the equation for the slope of a line?", "m = (y₂ - y₁)/(x₂ - x₁)", Difficulty.Moderate);
@@ -522,7 +528,7 @@ public class TestMaker {
 //	}
 
 	// didn't use at the end
-	private static String inputPargraph(Scanner input) {
+	private static String inputPargraph() {
 		StringBuffer buffer = new StringBuffer();
 		String s = "";
 		boolean fin = false;
@@ -548,7 +554,7 @@ public class TestMaker {
 	 * @param input where to read the difficulty from
 	 * @return difficulty from the user
 	 */
-	private static Difficulty getDifficultyFromUser(Scanner input) {
+	private static Difficulty getDifficultyFromUser() {
 		Difficulty[] difficulties = Difficulty.values();
 		int diff = 0;
 		boolean isValid = false;
@@ -576,19 +582,22 @@ public class TestMaker {
 	 * @param input where to read the subject from
 	 * @return subject from the user
 	 */
-	private static Subject getSubjectFromUser(Scanner input) { // sad i am not allowed to use generics
+	private static Subject getSubjectFromUser() { // sad i am not allowed to use generics
 		Subject[] subjects = Subject.values();
 		int subject = 0;
 		boolean isValid = false;
 
 		do {
+			
+			//print the subject
 			System.out.println("Select a subject: ");
 			for (Subject d : subjects) {
 				System.out.println((d.ordinal() + 1) + ". " + d.name());
 			}
+			
 			subject = input.nextInt();
 			input.nextLine(); // clears buffer
-			subject--;
+			subject--;//start from 0 instead of 1
 
 			isValid = subject < subjects.length && subject >= 0;
 			if (!isValid)
