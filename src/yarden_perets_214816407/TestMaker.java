@@ -33,7 +33,7 @@ public class TestMaker {
 		 * to not duplicate the questions in the db
 		*/
 		
-		//hardCoddedQue(repo, subject); //works even by subject enjoy :)
+		hardCodedQue(repo, subject); //works even by subject enjoy :)
 
 		do {
 			printMenu();
@@ -112,8 +112,6 @@ public class TestMaker {
 	 * @throws NumOfAnswersException
 	 */
 	public static void generateTest(Repo repo) throws IOException {
-
-		// Scanner input = new Scanner(System.in);
 		int numQue = 0;
 
 		do {
@@ -157,7 +155,6 @@ public class TestMaker {
 	 * @param repo the program's repository
 	 */
 	private static void deleteQuestion(Repo repo) {
-		// Scanner input = new Scanner(System.in);
 		boolean questionExist = false;
 		int id = 0;
 
@@ -182,7 +179,6 @@ public class TestMaker {
 	 * @param repo the program's repository
 	 */
 	private static void deleteAnswerFromAQuestion(Repo repo) {
-		// Scanner input = new Scanner(System.in);
 		boolean answerExist = false;
 		int selection = 0;
 		Question que = Repo.selectQuestionFromRepo(repo, input);
@@ -220,7 +216,6 @@ public class TestMaker {
 	 * @param repo the program's repository
 	 */
 	public static void appendAnswerToQuestion(Repo repo) {
-		// Scanner input = new Scanner(System.in);
 		Question que = Repo.selectQuestionFromRepo(repo, input);
 		String ans = Repo.selectAnswerFromRepo(repo, input);
 
@@ -245,9 +240,8 @@ public class TestMaker {
 	 * @param repo the program's repository
 	 */
 	private static void addQuestion(Repo repo) {
-		// Scanner input = new Scanner(System.in);
 		String text = "";
-		// boolean res = false;;
+		// boolean res = false;
 		Question que = null;
 		boolean isValid = false;
 		int selction = 0;
@@ -278,18 +272,41 @@ public class TestMaker {
 				System.out.println("Enter The school solution: ");
 				String solution = input.nextLine();// inputPargraph(input);
 				que = new OpenEndedQuestion(text, solution, diff);
+				isValid = addQuestion(repo, (OpenEndedQuestion)que);
 
 			} else {
 				que = new MultiSelectQuestion(text, diff);
+				isValid = addQuestion(repo, (MultiSelectQuestion)que);
 			}
 
-			isValid = repo.addQuestion(que);
-			// isValid = res.compareTo(ArrayControl.Sucsses) == 0;
 			if (!isValid)
 				System.out.println("An error occurred while creating the question! Please try again!");
 
 		} while (!isValid);
 
+	}
+	
+	private static boolean addQuestion(Repo repo, MultiSelectQuestion que) 
+	{
+		boolean res = repo.addQuestion(que);
+		if(res) {
+			Answer[] answers = que.getAnswers();
+			int numAnswers = que.getNumAnswers();
+	
+			for (int i = 0; i < numAnswers; i++) {
+				repo.addAnswer(answers[i].getText());
+			}
+		}
+		return res;
+	}
+	
+	private static boolean addQuestion(Repo repo, OpenEndedQuestion que) 
+	{
+
+		boolean res = repo.addQuestion(que);
+		if(res)
+			repo.addAnswer(que.getSolution());
+		return res;
 	}
 
 	/**
@@ -298,7 +315,6 @@ public class TestMaker {
 	 * @param repo the program's repository
 	 */
 	private static void addAnswer(Repo repo) {
-		// Scanner input = new Scanner(System.in);
 		boolean res = true;
 		String newAnswer = "";
 
@@ -319,7 +335,7 @@ public class TestMaker {
 	 * 
 	 * @param repo the program's repository
 	 */
-	public static void hardCoddedQue(Repo repo, Subject subject) {
+	public static void hardCodedQue(Repo repo, Subject subject) {
 		MultiSelectQuestion[] multiQuestions = new MultiSelectQuestion[20];
 		OpenEndedQuestion[] openQuestions = new OpenEndedQuestion[10];
 
@@ -451,11 +467,13 @@ public class TestMaker {
 		
 
 		for (int i = 0; i < multiQuestions.length; i++) {
-			repo.addQuestion(multiQuestions[i]);
+			if(multiQuestions[i] != null)
+				addQuestion(repo, multiQuestions[i]);
 		}
 
 		for (int i = 0; i < openQuestions.length; i++) {
-			repo.addQuestion(openQuestions[i]);
+			if(openQuestions[i] != null)
+				addQuestion(repo,openQuestions[i]);
 		}
 	}
 
@@ -469,12 +487,10 @@ public class TestMaker {
 		System.out.println("2. Add a new answers to the repo");
 		System.out.println("3. Append an answer to an existing question");
 		System.out.println("4. Add a new question");
-//		System.out.println("4. Update an exsisting question");
-//		System.out.println("5. Update an exsisting answer to a question");
 		System.out.println("5. Delete an answers to a question");
 		System.out.println("6. Delete a question");
 		System.out.println("7. Generate a new test");
-		// System.out.println("-1 to exit");
+		System.out.println("-1 to exit");
 	}
 
 //	/**
@@ -607,5 +623,5 @@ public class TestMaker {
 
 		return subjects[subject];
 	}
-
+	
 }

@@ -1,7 +1,10 @@
 package yarden_perets_214816407;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Scanner;
 
 //import java.util.Arrays;
@@ -14,22 +17,18 @@ public class Repo implements Serializable {
 		Math, Science, History, Geography
 	}
 
-	private String[] answers;
-	private Question[] questions;
-	private int numQuestions;
-	private int numAnswers;
+	private LinkedHashSet<String> answers;
+	private ArrayList<Question> questions;
 	private Subject subject;
 
 	/**
 	 * C'tor
 	 * 
-	 * Creates an answer array with the 2 defualt answers in the start
+	 * Creates an answer array with the 2 default answers in the start
 	 */
 	public Repo(Subject subject) {
-		this.answers = new String[2];
-		this.questions = null;
-		this.numQuestions = 0;
-		this.numAnswers = 0;
+		this.answers = new LinkedHashSet<>();
+		this.questions = new ArrayList<>();
 		this.subject = subject;
 		addAnswer("No answer is correct"); // answers[0]
 		addAnswer("More then one answer is correct"); // answers[1]
@@ -42,17 +41,8 @@ public class Repo implements Serializable {
 	 * @param ansToAdd the answer to add
 	 * @return whether the question was added
 	 */
-	public boolean addAnswer(String ansToAdd) {
-		if (doseAnswerExist(ansToAdd)) {
-			return false; // dose exist
-		}
-
-		if (numAnswers >= answers.length) {
-			resizeAnswers(answers.length + 1);
-		}
-
-		answers[numAnswers++] = ansToAdd;
-		return true;
+	public boolean addAnswer(String ansToAdd) {		
+		return answers.add(ansToAdd);
 	}
 
 	/**
@@ -61,33 +51,8 @@ public class Repo implements Serializable {
 	 * @param queToAdd the question to add
 	 * @return whether the answer was added
 	 */
-	public boolean addQuestion(Question queToAdd) { // TODO: fix method to use SOLID
-		if (queToAdd == null)
-			return false;
-
-		if (questions == null) {
-			this.questions = new Question[1];
-		}
-
-		if (numQuestions >= questions.length) {
-			resizeQuestions(questions.length + 1);
-		}
-
-		questions[numQuestions++] = queToAdd;
-
-		if (queToAdd instanceof MultiSelectQuestion) {
-			MultiSelectQuestion multiQ = (MultiSelectQuestion) queToAdd;
-			Answer[] answers = multiQ.getAnswers();
-			int numAnswers = multiQ.getNumAnswers();
-
-			for (int i = 0; i < numAnswers; i++) {
-				this.addAnswer(answers[i].getText());
-			}
-		} else if (queToAdd instanceof OpenEndedQuestion) {
-			this.addAnswer(((OpenEndedQuestion) queToAdd).getSolution());
-		}
-
-		return true;
+	public boolean addQuestion(Question queToAdd) { 
+		return questions.add(queToAdd);
 	}
 
 	/**
@@ -109,14 +74,7 @@ public class Repo implements Serializable {
 	 * @return the numAnswers
 	 */
 	public int getNumAnswers() {
-		return numAnswers;
-	}
-
-	/**
-	 * @param numAnswers the numAnswers to set
-	 */
-	public void setNumAnswers(int numAnswers) {
-		this.numAnswers = numAnswers;
+		return answers.size();
 	}
 
 	/**
@@ -126,10 +84,11 @@ public class Repo implements Serializable {
 	 * @param index The answer index
 	 * @return The answer object
 	 */
+	@Deprecated
 	public String getAnswerByIndex(int index) {
-		if (answers != null && (index < numAnswers && index >= 2)) { // 2 because of default answers (index 0,1)
-			return answers[index];
-		}
+//		if (answers != null && (index < numAnswers && index >= 2)) { // 2 because of default answers (index 0,1)
+//			return answers[index];
+//		}
 		return null;
 	}
 
@@ -141,15 +100,7 @@ public class Repo implements Serializable {
 	 * @return whether the question was removed
 	 */
 	public boolean deleteQuestionById(int id) {
-
-		for (int i = 0; i < numQuestions; i++) {
-			if (questions[i].getId() == id) {
-				questions[i] = questions[--numQuestions];
-				questions[numQuestions] = null;
-				return true;
-			}
-		}
-		return false;
+		return questions.remove(getQuestionByID(id));
 	}
 
 	/**
@@ -158,19 +109,18 @@ public class Repo implements Serializable {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 
-		if (numQuestions == 0 || questions == null)
+		if (questions.isEmpty())
 			return "There are no question in the repo!\n";
 
 		builder.append("Subject: ");
 		builder.append(subject.name());
 		builder.append("\n");
 		builder.append("Questions in the repo:\n\n");
-		// builder.append(Arrays.toString(questions));
-		for (int i = 0; i < numQuestions; i++) {
-//			builder.append(i + 1);
-//			builder.append(". ");
-			questions[i].setDisplaySolution(false);
-			builder.append(questions[i].toString());
+		
+		//TODO: use iterator instead.
+		for(Question question : questions) {
+			question.setDisplaySolution(false);
+			builder.append(question.toString());
 		}
 		return builder.toString();
 	}
@@ -179,7 +129,7 @@ public class Repo implements Serializable {
 	 * @return number of questions in the repo
 	 */
 	public int getNumQuestions() {
-		return numQuestions;
+		return questions.size();
 	}
 
 	/**
@@ -202,15 +152,18 @@ public class Repo implements Serializable {
 	public String toStringAnswers() {
 		StringBuilder builder = new StringBuilder();
 
-		if (numAnswers == 0 || answers == null)
+		if (answers.isEmpty())
 			return "There are no answers in the repo!\n";
 
 		builder.append("Answers in the repo: \n");
-		for (int i = 0; i < numAnswers; i++) {
-			builder.append(i + 1);
+		//TODO: use iterator
+		int i = 1;
+		for(String ans : answers) {
+			builder.append(i);
 			builder.append(". ");
-			builder.append(answers[i]);
+			builder.append(ans);
 			builder.append("\n");
+			i++;
 		}
 		return builder.toString();
 	}
@@ -220,13 +173,14 @@ public class Repo implements Serializable {
 	 * 
 	 * @param size new size
 	 */
+	@Deprecated
 	private void resizeAnswers(int size) {
-		String[] newAnswers = new String[size];
-		for (int i = 0; i < answers.length; i++) {
-			newAnswers[i] = answers[i];
-		}
-
-		this.answers = newAnswers;
+//		String[] newAnswers = new String[size];
+//		for (int i = 0; i < answers.length; i++) {
+//			newAnswers[i] = answers[i];
+//		}
+//
+//		this.answers = newAnswers;
 	}
 
 	/**
@@ -234,13 +188,14 @@ public class Repo implements Serializable {
 	 * 
 	 * @param size new size
 	 */
+	@Deprecated
 	private void resizeQuestions(int size) {
-		Question[] newQuestions = new Question[size];
-		for (int i = 0; i < questions.length; i++) {
-			newQuestions[i] = questions[i];
-		}
-
-		this.questions = newQuestions;
+//		Question[] newQuestions = new Question[size];
+//		for (int i = 0; i < questions.length; i++) {
+//			newQuestions[i] = questions[i];
+//		}
+//
+//		this.questions = newQuestions;
 	}
 
 	/**
@@ -250,13 +205,15 @@ public class Repo implements Serializable {
 	 * @param answer The answer to search for
 	 * @return whether it was found
 	 */
+	@Deprecated
 	private boolean doseAnswerExist(String answer) {
-		for (int i = 0; i < numAnswers; i++) {
-			if (answers[i].equals(answer)) {
-				return true;
-			}
-		}
-		return false;
+//		for (int i = 0; i < numAnswers; i++) {
+//			if (answers[i].equals(answer)) {
+//				return true;
+//			}
+//		}
+//		return false;
+		return answers.contains(answer);
 	}
 
 	/**
@@ -318,8 +275,9 @@ public class Repo implements Serializable {
 	 * @param moreThenOneCorrect The boolean field of second defualt answers
 	 * @return Both answers objects
 	 */
-	public Answer[] generateDefaultAnswers(boolean noneCorrect, boolean moreThenOneCorrect) {
-		return new Answer[] { new Answer(answers[0], noneCorrect), new Answer(answers[1], moreThenOneCorrect) };
+	@Deprecated
+	public LinkedHashSet<Answer> generateDefaultAnswers(boolean noneCorrect, boolean moreThenOneCorrect) {
+		return new LinkedHashSet<>(Arrays.asList(new Answer[] { new Answer("No answer is correct", noneCorrect), new Answer("More then one answer is correct", moreThenOneCorrect)}));
 	}
 
 	@Override
@@ -328,10 +286,8 @@ public class Repo implements Serializable {
 			return false;
 
 		Repo other = (Repo) obj;
-
-		if (this.numAnswers != other.numAnswers || this.numQuestions != other.numQuestions)
-			return false;
-		return Arrays.equals(this.answers, other.answers) && Arrays.equals(this.questions, other.questions);
+		
+		return questions.equals(other.questions);
 	}
 
 }
