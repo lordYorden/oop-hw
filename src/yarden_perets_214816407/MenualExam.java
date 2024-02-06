@@ -1,4 +1,5 @@
 package yarden_perets_214816407;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class MenualExam extends Exam {
@@ -11,10 +12,10 @@ public class MenualExam extends Exam {
 	}
 
 	@Override
-	public void createExam(Repo repo) {
+	public void createExam(Repo repo) throws IOException {
 		Question fromRepo = null;
 
-		for (int i = 0; i < this.questions.length; i++) {
+		for (int i = 0; i < maxNumQue; i++) {
 			fromRepo = Repo.selectQuestionFromRepo(repo, input);
 
 			if (fromRepo instanceof OpenEndedQuestion) {
@@ -22,32 +23,37 @@ public class MenualExam extends Exam {
 				try {
 					this.addQuestion(new OpenEndedQuestion((OpenEndedQuestion) fromRepo));
 					System.out.println("The question was successfully added!");
-					continue;
 				} catch (NumOfQuestionsException e) {
 					System.out.println("Error! " + e);
 					break;
 				}
-			}
-
-			MultiSelectQuestion toAdd = new MultiSelectQuestion((MultiSelectQuestion) fromRepo);
-			boolean answerExist = true;
-			int selection = 0;
-
-			try {
-				deleteAnswerFromAQuestion(toAdd, input);
-				this.addQuestion(toAdd, repo);
-				System.out.println("The question was successfully added!");
-				
-			} catch (NumOfAnswersException e) {
-				System.out.println("Error! " + e.getMessage());
-				i--;
-				continue;
-
-			} catch (NumOfQuestionsException e) {
-				System.out.println("Error! " + e.getMessage());
-				break;
+			} else {
+				MultiSelectQuestion toAdd = new MultiSelectQuestion((MultiSelectQuestion) fromRepo);
+				boolean answerExist = true;
+				int selection = 0;
+	
+				try {
+					deleteAnswerFromAQuestion(toAdd, input);
+					this.addQuestion(toAdd, repo);
+					System.out.println("The question was successfully added!");
+					
+				} catch (NumOfAnswersException e) {
+					System.out.println("Error! " + e.getMessage());
+					i--;
+					continue;
+	
+				} catch (NumOfQuestionsException e) {
+					System.out.println("Error! " + e.getMessage());
+					break;
+				}
 			}
 			
+			if(questions.size() != i+1) 
+			{
+				System.out.println("Error! Duplicate question cannot be entered!");
+				System.in.read();
+				i--;//duplicate
+			}
 		}
 
 	}
@@ -67,7 +73,7 @@ public class MenualExam extends Exam {
 			input.nextLine();
 			
 			if (selection != -1)
-				answerExist = multiQue.deleteAnswerByIndex(--selection);
+				answerExist = multiQue.deleteAnswerById(selection);
 
 			if (!answerExist)
 				System.out.println("Error! Answer dosen't exist!");

@@ -2,16 +2,22 @@ package yarden_perets_214816407;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 
 public abstract class Exam implements Examable {
 	private String date;
-	protected int currNumQue;
-	protected Question[] questions;
+	protected LinkedHashSet<Question> questions; 
 	private boolean displaySolution;
+	public static int maxQuestionCapacity = 10;
+	protected int maxNumQue;
 
 	/**
 	 * C'tor saves the date and time the test was created
@@ -20,13 +26,13 @@ public abstract class Exam implements Examable {
 	 * @throws NumOfQuestionsException
 	 */
 	public Exam(int maxNumQue) throws NumOfQuestionsException {
-		if (maxNumQue > 10)
+		if (maxNumQue > maxQuestionCapacity)
 			throw new NumOfQuestionsException(maxNumQue);
 
-		questions = new Question[maxNumQue];
-		// this.maxNumQue = maxNumQue;
+		questions = new LinkedHashSet<>();
+		this.maxNumQue = maxNumQue;
 		displaySolution = false;
-		currNumQue = 0;
+		//currNumQue = 0;
 		this.date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm"));
 	}
 
@@ -38,42 +44,39 @@ public abstract class Exam implements Examable {
 	 * @throws NumOfQuestionsException
 	 */
 	public boolean addQuestion(Question queToAdd) throws NumOfQuestionsException {
-		if (currNumQue >= questions.length) {
-			throw new NumOfQuestionsException(currNumQue + 1, questions.length);
+		if (questions.size() >= maxNumQue) {
+			throw new NumOfQuestionsException(questions.size() + 1, maxNumQue);
 			// System.out.println("Error! No more question could be added, reached full
 			// capacity");
 		}
 
-		questions[currNumQue++] = queToAdd;
-		return true;
+		return questions.add(queToAdd);
 	}
 
 	public boolean addQuestion(MultiSelectQuestion queToAdd, Repo repo)
 			throws NumOfAnswersException, NumOfQuestionsException {
 		int numCorrect = queToAdd.getNumCorrect();
-		Answer[] defaults = repo.generateDefaultAnswers((numCorrect == 0), (numCorrect > 1));
+		ArrayList<Answer> defaults = repo.generateDefaultAnswers((numCorrect == 0), (numCorrect > 1));
 
 		int numOfAns = queToAdd.getNumAnswers();
 		if (numOfAns <= 3)
 			throw new NumOfAnswersException(numOfAns);
 
-		queToAdd.addAnswer(defaults[0]);
-		queToAdd.addAnswer(defaults[1]);
+		queToAdd.addAnswer(defaults.get(0));
+		queToAdd.addAnswer(defaults.get(1));
 		return addQuestion((Question) queToAdd);
 	}
 
 	/**
-	 * @param displayAnswers whether to display the answers to every question
-	 * @return object values
+	 * @return object to string
 	 */
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < currNumQue; i++) {
-			questions[i].setDisplaySolution(displaySolution);
-			builder.append(questions[i].toString());
+				
+		for (Question question : questions) {			
+			question.setDisplaySolution(displaySolution);
+			builder.append(question.toString());	
 		}
-//		builder.append(Arrays.toString(questions));
-//		builder.append("]");
 		return builder.toString();
 	}
 
@@ -96,19 +99,17 @@ public abstract class Exam implements Examable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Exam))
+		if (this == obj)
+			return true;
+		if (obj == null)
 			return false;
-
+		if (getClass() != obj.getClass())
+			return false;
 		Exam other = (Exam) obj;
-
-		if (this.currNumQue != other.currNumQue) {
-			return false;
-		}
-
-		return Arrays.equals(this.questions, other.questions);
+		return maxNumQue == other.maxNumQue && Objects.equals(questions, other.questions);
 	}
 
 	@Override
-	public abstract void createExam(Repo repo);
+	public abstract void createExam(Repo repo) throws IOException;
 
 }

@@ -2,8 +2,6 @@ package yarden_perets_214816407;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 
@@ -17,7 +15,7 @@ public class Repo implements Serializable {
 		Math, Science, History, Geography
 	}
 
-	private LinkedHashSet<String> answers;
+	private LinkedHashSet<Answer> answers;
 	private ArrayList<Question> questions;
 	private Subject subject;
 
@@ -41,8 +39,10 @@ public class Repo implements Serializable {
 	 * @param ansToAdd the answer to add
 	 * @return whether the question was added
 	 */
-	public boolean addAnswer(String ansToAdd) {		
-		return answers.add(ansToAdd);
+	public boolean addAnswer(String ansToAdd) {	
+		Answer newAns = new Answer(ansToAdd, false);
+		newAns.setId(answers.size());
+		return answers.add(newAns);
 	}
 
 	/**
@@ -84,11 +84,12 @@ public class Repo implements Serializable {
 	 * @param index The answer index
 	 * @return The answer object
 	 */
-	@Deprecated
-	public String getAnswerByIndex(int index) {
-//		if (answers != null && (index < numAnswers && index >= 2)) { // 2 because of default answers (index 0,1)
-//			return answers[index];
-//		}
+	//TODO: update comment
+	public Answer getAnswerById(int id) {		
+		for(Answer answer : answers) {
+			if(answer.getId() == id)
+				return answer;
+		}
 		return null;
 	}
 
@@ -100,6 +101,8 @@ public class Repo implements Serializable {
 	 * @return whether the question was removed
 	 */
 	public boolean deleteQuestionById(int id) {
+		if(questions.isEmpty())
+			return false;
 		return questions.remove(getQuestionByID(id));
 	}
 
@@ -117,7 +120,6 @@ public class Repo implements Serializable {
 		builder.append("\n");
 		builder.append("Questions in the repo:\n\n");
 		
-		//TODO: use iterator instead.
 		for(Question question : questions) {
 			question.setDisplaySolution(false);
 			builder.append(question.toString());
@@ -156,14 +158,12 @@ public class Repo implements Serializable {
 			return "There are no answers in the repo!\n";
 
 		builder.append("Answers in the repo: \n");
-		//TODO: use iterator
-		int i = 1;
-		for(String ans : answers) {
-			builder.append(i);
+		for(Answer ans : answers) {
+			builder.append(ans.getId());
 			builder.append(". ");
+			ans.setDisplaySolution(false);
 			builder.append(ans);
 			builder.append("\n");
-			i++;
 		}
 		return builder.toString();
 	}
@@ -250,34 +250,48 @@ public class Repo implements Serializable {
 	 */
 	public static String selectAnswerFromRepo(Repo repo, Scanner input) {
 		// Scanner input = new Scanner(System.in);
-		String ans = null;
+		Answer ans = null;
 		int selection = 0;
 
 		do {
 			System.out.print(repo.toStringAnswers());
 			System.out.println("Select an answer: ");
 			selection = input.nextInt();
-			ans = repo.getAnswerByIndex(--selection);
+			
+			if(selection <= 1) //Defaults
+				ans = null;
+			else
+				ans = repo.getAnswerById(selection);
 
 			if (ans == null)
 				System.out.println("Error! Answer dosen't exist!");
 
 		} while (ans == null);
 
-		return ans;
+		return ans.getText();
 	}
 
 	/**
-	 * Public helper method Genrates new answers objects of the defualt answers
+	 * Public helper method Generates new answers objects of the default answers
 	 * based of question data provided
 	 * 
-	 * @param noneCorrect        The boolean field of first defualt answers
-	 * @param moreThenOneCorrect The boolean field of second defualt answers
+	 * @param noneCorrect        The boolean field of first default answers
+	 * @param moreThenOneCorrect The boolean field of second default answers
 	 * @return Both answers objects
 	 */
-	@Deprecated
-	public LinkedHashSet<Answer> generateDefaultAnswers(boolean noneCorrect, boolean moreThenOneCorrect) {
-		return new LinkedHashSet<>(Arrays.asList(new Answer[] { new Answer("No answer is correct", noneCorrect), new Answer("More then one answer is correct", moreThenOneCorrect)}));
+	//TODO: update comment
+	public ArrayList<Answer> generateDefaultAnswers(boolean noneCorrect, boolean moreThenOneCorrect) {
+		ArrayList<Answer> defaults = new ArrayList<>();
+		Answer temp = new Answer(getAnswerById(0));
+		temp.setCorrect(noneCorrect);
+		
+		defaults.add(temp);
+		
+		temp = new Answer(getAnswerById(1));
+		temp.setCorrect(moreThenOneCorrect);
+		defaults.add(temp);
+		
+		return defaults;
 	}
 
 	@Override

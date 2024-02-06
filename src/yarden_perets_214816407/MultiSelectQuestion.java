@@ -2,11 +2,14 @@ package yarden_perets_214816407;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 
-public class MultiSelectQuestion extends Question implements Serializable {
-	private int numAnswers;
-	private Answer[] answers;
+public class MultiSelectQuestion extends Question implements Serializable, Iterable<Answer> {
+	private LinkedHashSet<Answer> answers;
 	private int numCorrect;
+	public static final int maxAnswersCpacity = 10;
 
 	/**
 	 * C'tor
@@ -15,9 +18,8 @@ public class MultiSelectQuestion extends Question implements Serializable {
 	 */
 	MultiSelectQuestion(String text, Difficulty difficulty) {
 		super(text, difficulty);
-		this.numAnswers = 0;
 		this.numCorrect = 0;
-		this.answers = new Answer[10];
+		this.answers = new LinkedHashSet<>();
 	}
 
 	/**
@@ -28,23 +30,30 @@ public class MultiSelectQuestion extends Question implements Serializable {
 	MultiSelectQuestion(MultiSelectQuestion other) {
 		super(other.text, other.difficulty);
 		this.numCorrect = other.numCorrect;
-		this.numAnswers = other.numAnswers;
-		this.answers = new Answer[10];
-		for (int i = 0; i < other.numAnswers; i++) {
-			this.answers[i] = new Answer(other.answers[i]);
+		this.answers = new LinkedHashSet<>(other.answers);
+	}
+
+	//for hard coded questions
+	public MultiSelectQuestion(String text, Difficulty difficulty, Answer[] answers) {
+		this(text, difficulty);
+		//count correct
+		for (Answer answer : answers) {
+			if(answer.isCorrect())
+				numCorrect++;
+			addAnswer(answer);
 		}
 	}
 
 	/**
 	 * @return the question's possible answers
 	 */
-	public Answer[] getAnswers() {
+	@Deprecated
+	public LinkedHashSet<Answer> getAnswers() {
 		return answers;
 	}
 
 	public void clear() {
-		this.answers = new Answer[10];
-		this.numAnswers = 0;
+		this.answers.clear();
 		this.numCorrect = 0;
 	}
 
@@ -52,7 +61,7 @@ public class MultiSelectQuestion extends Question implements Serializable {
 	 * @return number of possible answers
 	 */
 	public int getNumAnswers() {
-		return numAnswers;
+		return answers.size();
 	}
 
 	/**
@@ -87,32 +96,34 @@ public class MultiSelectQuestion extends Question implements Serializable {
 		StringBuilder builder = new StringBuilder();
 		builder.append(super.toString());
 
-		for (int i = 0; i < numAnswers; i++) {
-			builder.append(i + 1);
+		for (Answer answer : answers) {
+			builder.append(answer.getId());
 			builder.append(". ");
-			answers[i].setDisplaySolution(displaySolution);
-			builder.append(answers[i].toString());
+			answer.setDisplaySolution(displaySolution);
+			builder.append(answer.toString());
 		}
 		builder.append("\n");
 		return builder.toString();
 	}
 
 	/**
-	 * adds and aswers to the question's possible answers
+	 * adds and answer to the question's possible answers
 	 * 
 	 * @param ansToAdd answer given
 	 * @return whether the answer was added
 	 */
 	public boolean addAnswer(Answer ansToAdd) {
-		if (numAnswers >= answers.length) {
+		
+		if (answers.size() >= maxAnswersCpacity) {
 			return false;// array full
 		}
-
-		answers[numAnswers++] = ansToAdd;
+		
+		ansToAdd.setId(answers.size() + 1);//for a nice print
 		if (ansToAdd.isCorrect()) {
 			numCorrect++;
 		}
-		return true;
+		
+		return answers.add(ansToAdd);
 	}
 
 	/**
@@ -121,30 +132,44 @@ public class MultiSelectQuestion extends Question implements Serializable {
 	 * @param index answer to be deleted
 	 * @return whether the answer was deleted
 	 */
-	public boolean deleteAnswerByIndex(int index) {
-		if (numAnswers <= 0 && answers != null) {
-			// System.out.println("Error! No more answers left to remove!");
+	//TODO: figure out how to resolve id
+	public boolean deleteAnswerById(int id) {
+		if(answers.isEmpty())
 			return false;
+		return answers.remove(getAnswerById(id));
+	}
+	
+	public Answer getAnswerById(int id) {		
+		for(Answer answer : answers) {
+			if(answer.getId() == id)
+				return answer;
 		}
+		return null;
+	}
 
-		if (numAnswers <= index || index < 0) {
-			return false;
-		}
-
-		if (answers[index].isCorrect())
-			numCorrect--;
-
-		answers[index] = answers[--numAnswers];
-		answers[numAnswers] = null;
-		return true;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(answers, numCorrect);
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof MultiSelectQuestion))
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
 			return false;
-
-		MultiSelectQuestion que = (MultiSelectQuestion) obj;
-		return super.equals(obj) && Arrays.equals(que.answers, this.answers);
+		if (getClass() != obj.getClass())
+			return false;
+		MultiSelectQuestion other = (MultiSelectQuestion) obj;
+		return Objects.equals(answers, other.answers) && numCorrect == other.numCorrect;
 	}
+
+	@Override
+	public Iterator<Answer> iterator() {
+		return answers.iterator();
+	}
+
 }

@@ -1,6 +1,7 @@
 package yarden_perets_214816407;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class OpenEndedQuestion extends Question implements Serializable {
 
@@ -34,13 +35,23 @@ public class OpenEndedQuestion extends Question implements Serializable {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(solution);
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof OpenEndedQuestion))
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
 			return false;
-
-		OpenEndedQuestion que = (OpenEndedQuestion) obj;
-
-		return super.equals(obj) && que.solution == solution;
+		if (getClass() != obj.getClass())
+			return false;
+		OpenEndedQuestion other = (OpenEndedQuestion) obj;
+		return Objects.equals(solution, other.solution);
 	}
 
 }
