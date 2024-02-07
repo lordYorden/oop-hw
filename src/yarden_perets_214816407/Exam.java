@@ -7,8 +7,6 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 
@@ -18,6 +16,8 @@ public abstract class Exam implements Examable {
 	private boolean displaySolution;
 	public static int maxQuestionCapacity = 10;
 	protected int maxNumQue;
+	
+	public static final int MIN_ANSWERS_PER_QUESTION = 4;
 
 	/**
 	 * C'tor saves the date and time the test was created
@@ -59,7 +59,7 @@ public abstract class Exam implements Examable {
 		ArrayList<Answer> defaults = repo.generateDefaultAnswers((numCorrect == 0), (numCorrect > 1));
 
 		int numOfAns = queToAdd.getNumAnswers();
-		if (numOfAns <= 3)
+		if (numOfAns < MIN_ANSWERS_PER_QUESTION)
 			throw new NumOfAnswersException(numOfAns);
 
 		queToAdd.addAnswer(defaults.get(0));

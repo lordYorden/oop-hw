@@ -34,7 +34,7 @@ public class TestMaker {
 		 * to not duplicate the questions in the db
 		*/
 		
-		//hardCodedQue(repo, subject); //works even by subject enjoy :)
+		hardCodedQue(repo, subject); //works even by subject enjoy :)
 
 		do {
 			printMenu();
@@ -190,23 +190,23 @@ public class TestMaker {
 		}
 
 		MultiSelectQuestion multiQue = (MultiSelectQuestion) que;
-
-		if (multiQue.getNumAnswers() == 0) {
-			System.out.println("Error! No answers to remove!");
-			return;
-		}
-
-		do {
-			System.out.println(multiQue.toString());
-			System.out.println("Select an Answers to remove: ");
-			selection = input.nextInt();
-			input.nextLine();
-			answerExist = multiQue.deleteAnswerById(selection);
-
-			if (!answerExist)
-				System.out.println("Error! Answer dosen't exist!");
-
-		} while (!answerExist);
+		MultiSelectQuestion.deleteAnswerFromAQuestion(multiQue, input);
+//		if (multiQue.getNumAnswers() == 0) {
+//			System.out.println("Error! No answers to remove!");
+//			return;
+//		}
+//
+//		do {
+//			System.out.println(multiQue.toString());
+//			System.out.println("Select an Answers to remove: ");
+//			selection = input.nextInt();
+//			input.nextLine();
+//			answerExist = multiQue.deleteAnswerById(selection);
+//
+//			if (!answerExist)
+//				System.out.println("Error! Answer dosen't exist!");
+//
+//		} while (!answerExist);
 
 	}
 
@@ -218,7 +218,7 @@ public class TestMaker {
 	 */
 	public static void appendAnswerToQuestion(Repo repo) {
 		Question que = Repo.selectQuestionFromRepo(repo, input);
-		String ans = Repo.selectAnswerFromRepo(repo, input);
+		Answer ans = Repo.selectAnswerFromRepo(repo, input);
 
 		if (!(que instanceof MultiSelectQuestion)) {
 			System.out.println("Error! That's not a Multi Select Question, Can't add answers!");
@@ -227,11 +227,14 @@ public class TestMaker {
 
 		System.out.println("Is the answers youv'e picked correct? (true/false): ");
 		boolean isCorrect = input.nextBoolean();
+		
+		ans = new Answer(ans);
+		ans.setCorrect(isCorrect);
 
-		boolean res = ((MultiSelectQuestion) que).addAnswer(new Answer(ans, isCorrect));
+		boolean res = ((MultiSelectQuestion) que).addAnswer(ans);
 
 		if (!res)
-			System.out.println("Error! No more question could be added, reached full capacity");
+			System.out.println("Error! An Error aacured while adding the question! Might be duplicate answer or Full Capcity reached!");
 
 	}
 
@@ -292,7 +295,7 @@ public class TestMaker {
 		boolean res = repo.addQuestion(que);
 		if(res) {
 			for (Answer answer : que) {
-				repo.addAnswer(answer.getText());
+				repo.addAnswer(answer);
 			}
 		}
 		return res;
@@ -603,6 +606,7 @@ public class TestMaker {
 //	}
 
 	// didn't use at the end
+	@SuppressWarnings("unused")
 	private static String inputPargraph() {
 		StringBuffer buffer = new StringBuffer();
 		String s = "";

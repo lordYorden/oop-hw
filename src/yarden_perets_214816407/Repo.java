@@ -2,6 +2,7 @@ package yarden_perets_214816407;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 
@@ -16,7 +17,7 @@ public class Repo implements Serializable {
 	}
 
 	private LinkedHashSet<Answer> answers;
-	private ArrayList<Question> questions;
+	private HashSet<Question> questions;
 	private Subject subject;
 
 	/**
@@ -26,7 +27,7 @@ public class Repo implements Serializable {
 	 */
 	public Repo(Subject subject) {
 		this.answers = new LinkedHashSet<>();
-		this.questions = new ArrayList<>();
+		this.questions = new HashSet<>();
 		this.subject = subject;
 		addAnswer("No answer is correct"); // answers[0]
 		addAnswer("More then one answer is correct"); // answers[1]
@@ -39,8 +40,15 @@ public class Repo implements Serializable {
 	 * @param ansToAdd the answer to add
 	 * @return whether the question was added
 	 */
+	public boolean addAnswer(Answer ansToAdd) {	
+		ansToAdd.setId(answers.size()); //update id based on repo
+		Answer newAns = new Answer(ansToAdd);
+		newAns.setId(answers.size());
+		return answers.add(newAns);
+	}
+	
 	public boolean addAnswer(String ansToAdd) {	
-		Answer newAns = new Answer(ansToAdd, false);
+		Answer newAns = new Answer(ansToAdd, false); //Default
 		newAns.setId(answers.size());
 		return answers.add(newAns);
 	}
@@ -159,8 +167,9 @@ public class Repo implements Serializable {
 
 		builder.append("Answers in the repo: \n");
 		for(Answer ans : answers) {
+			builder.append("ID: ");
 			builder.append(ans.getId());
-			builder.append(". ");
+			builder.append("\n");
 			ans.setDisplaySolution(false);
 			builder.append(ans);
 			builder.append("\n");
@@ -173,6 +182,7 @@ public class Repo implements Serializable {
 	 * 
 	 * @param size new size
 	 */
+	@SuppressWarnings("unused")
 	@Deprecated
 	private void resizeAnswers(int size) {
 //		String[] newAnswers = new String[size];
@@ -188,6 +198,7 @@ public class Repo implements Serializable {
 	 * 
 	 * @param size new size
 	 */
+	@SuppressWarnings("unused")
 	@Deprecated
 	private void resizeQuestions(int size) {
 //		Question[] newQuestions = new Question[size];
@@ -205,8 +216,9 @@ public class Repo implements Serializable {
 	 * @param answer The answer to search for
 	 * @return whether it was found
 	 */
+	@SuppressWarnings("unused")
 	@Deprecated
-	private boolean doseAnswerExist(String answer) {
+	private boolean doseAnswerExist(Answer answer) {
 //		for (int i = 0; i < numAnswers; i++) {
 //			if (answers[i].equals(answer)) {
 //				return true;
@@ -248,8 +260,7 @@ public class Repo implements Serializable {
 	 * @param repo the program's repository
 	 * @return the answers that was selected
 	 */
-	public static String selectAnswerFromRepo(Repo repo, Scanner input) {
-		// Scanner input = new Scanner(System.in);
+	public static Answer selectAnswerFromRepo(Repo repo, Scanner input) {
 		Answer ans = null;
 		int selection = 0;
 
@@ -268,7 +279,7 @@ public class Repo implements Serializable {
 
 		} while (ans == null);
 
-		return ans.getText();
+		return ans;
 	}
 
 	/**

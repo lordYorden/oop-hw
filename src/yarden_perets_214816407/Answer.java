@@ -42,6 +42,7 @@ public class Answer implements Serializable {
 	 */
 	public Answer(Answer other) {
 		this(other.text, other.isCorrect);
+		this.id = other.id;
 	}
 
 	/**
@@ -93,7 +94,7 @@ public class Answer implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(isCorrect, text);
+		return Objects.hash(text);
 	}
 
 
@@ -107,7 +108,7 @@ public class Answer implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Answer other = (Answer) obj;
-		return isCorrect == other.isCorrect && Objects.equals(text, other.text);
+		return Objects.equals(text, other.text);
 	}
 
 }

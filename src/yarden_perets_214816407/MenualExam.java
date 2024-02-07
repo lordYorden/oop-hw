@@ -29,11 +29,9 @@ public class MenualExam extends Exam {
 				}
 			} else {
 				MultiSelectQuestion toAdd = new MultiSelectQuestion((MultiSelectQuestion) fromRepo);
-				boolean answerExist = true;
-				int selection = 0;
 	
 				try {
-					deleteAnswerFromAQuestion(toAdd, input);
+					MultiSelectQuestion.deleteAnswerFromAQuestion(toAdd, input);
 					this.addQuestion(toAdd, repo);
 					System.out.println("The question was successfully added!");
 					
@@ -58,6 +56,7 @@ public class MenualExam extends Exam {
 
 	}
 	
+	@Deprecated
 	public static void deleteAnswerFromAQuestion(MultiSelectQuestion multiQue, Scanner input) throws NumOfAnswersException {
 		boolean answerExist = true;
 		int selection = 0;

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Scanner;
 
 public class MultiSelectQuestion extends Question implements Serializable, Iterable<Answer> {
 	private LinkedHashSet<Answer> answers;
@@ -38,8 +39,6 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 		this(text, difficulty);
 		//count correct
 		for (Answer answer : answers) {
-			if(answer.isCorrect())
-				numCorrect++;
 			addAnswer(answer);
 		}
 	}
@@ -96,11 +95,13 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 		StringBuilder builder = new StringBuilder();
 		builder.append(super.toString());
 
+		int i = 1;
 		for (Answer answer : answers) {
-			builder.append(answer.getId());
+			builder.append(i);//for a nice print
 			builder.append(". ");
 			answer.setDisplaySolution(displaySolution);
 			builder.append(answer.toString());
+			i++;
 		}
 		builder.append("\n");
 		return builder.toString();
@@ -118,7 +119,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 			return false;// array full
 		}
 		
-		ansToAdd.setId(answers.size() + 1);//for a nice print
+		//ansToAdd.setId(answers.size() + 1);//for a nice print
 		if (ansToAdd.isCorrect()) {
 			numCorrect++;
 		}
@@ -136,7 +137,12 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	public boolean deleteAnswerById(int id) {
 		if(answers.isEmpty())
 			return false;
-		return answers.remove(getAnswerById(id));
+		
+		Answer ans = getAnswerById(id);
+		if(ans != null && ans.isCorrect())
+			numCorrect--;
+		
+		return answers.remove(ans);
 	}
 	
 	public Answer getAnswerById(int id) {		
@@ -170,6 +176,37 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	@Override
 	public Iterator<Answer> iterator() {
 		return answers.iterator();
+	}
+	
+	public static void deleteAnswerFromAQuestion(MultiSelectQuestion multiQue, Scanner input){
+		boolean answerExist = true;
+		int selection = 0;
+		
+		if (multiQue.getNumAnswers() == 0) {
+			System.out.println("Error! No answers to remove!");
+			return;
+		}
+		
+		do {
+			Iterator<Answer> it = multiQue.iterator();
+			
+			while(it.hasNext()) {
+				Answer ans = it.next();
+				ans.setDisplaySolution(false);
+				System.out.printf("ID: %d\n%s\n",ans.getId(), ans);
+			}
+			
+			System.out.println("Select Answers to remove (-1 to continue): ");
+			selection = input.nextInt();
+			input.nextLine();
+			
+			if (selection != -1)
+				answerExist = multiQue.deleteAnswerById(selection);
+
+			if (!answerExist)
+				System.out.println("Error! Answer dosen't exist!");
+
+		} while (selection != -1 || !answerExist);
 	}
 
 }
