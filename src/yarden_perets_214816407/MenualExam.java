@@ -37,11 +37,15 @@ public class MenualExam extends Exam {
 					
 				} catch (NumOfAnswersException e) {
 					System.out.println("Error! " + e.getMessage());
+					System.out.println("Press any key to continue...");
+					System.in.read();
 					i--;
 					continue;
 	
 				} catch (NumOfQuestionsException e) {
 					System.out.println("Error! " + e.getMessage());
+					System.out.println("Press any key to continue...");
+					System.in.read();
 					break;
 				}
 			}
@@ -49,6 +53,7 @@ public class MenualExam extends Exam {
 			if(questions.size() != i+1) 
 			{
 				System.out.println("Error! Duplicate question cannot be entered!");
+				System.out.println("Press any key to continue...");
 				System.in.read();
 				i--;//duplicate
 			}

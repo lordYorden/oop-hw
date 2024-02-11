@@ -12,6 +12,10 @@ import java.util.Scanner;
 
 public class Repo implements Serializable {
 
+	public static final int REPO_VERSION = 4;//define the project version
+	
+	private static final long serialVersionUID = REPO_VERSION;
+
 	public enum Subject {
 		Math, Science, History, Geography
 	}

@@ -1,13 +1,16 @@
 package yarden_perets_214816407;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class MultiSelectQuestion extends Question implements Serializable, Iterable<Answer> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = Repo.REPO_VERSION;
 	private LinkedHashSet<Answer> answers;
 	private int numCorrect;
 	public static final int maxAnswersCpacity = 10;

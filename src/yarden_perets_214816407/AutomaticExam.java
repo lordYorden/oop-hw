@@ -1,7 +1,5 @@
 package yarden_perets_214816407;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -77,6 +75,7 @@ public class AutomaticExam extends Exam {
 
 	}
 
+	@SuppressWarnings("unused")
 	@Deprecated
 	private boolean wasGenerated(String[] generated, String question) {
 		for (int i = 0; i < generated.length; i++) {

@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Answer implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = Repo.REPO_VERSION;
 	private String text;
 	private boolean isCorrect;
 	private boolean displaySolution;

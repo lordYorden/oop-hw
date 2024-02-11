@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
 
@@ -87,11 +89,6 @@ public class TestMaker {
 		String filename = subject.name() + ".db";
 		ObjectInputStream toLoad = new ObjectInputStream(new FileInputStream(filename));
 		Repo repo = (Repo) toLoad.readObject();
-//		if(obj != null) {
-//			repo = (Repo) obj;
-//		} else {
-//			repo = new Repo(subject);
-//		}
 		toLoad.close();
 		Question.setNumQuestions(repo.getNumQuestions() + 1);
 		return repo;
@@ -180,8 +177,6 @@ public class TestMaker {
 	 * @param repo the program's repository
 	 */
 	private static void deleteAnswerFromAQuestion(Repo repo) {
-		boolean answerExist = false;
-		int selection = 0;
 		Question que = Repo.selectQuestionFromRepo(repo, input);
 
 		if (!(que instanceof MultiSelectQuestion)) {
@@ -191,22 +186,6 @@ public class TestMaker {
 
 		MultiSelectQuestion multiQue = (MultiSelectQuestion) que;
 		MultiSelectQuestion.deleteAnswerFromAQuestion(multiQue, input);
-//		if (multiQue.getNumAnswers() == 0) {
-//			System.out.println("Error! No answers to remove!");
-//			return;
-//		}
-//
-//		do {
-//			System.out.println(multiQue.toString());
-//			System.out.println("Select an Answers to remove: ");
-//			selection = input.nextInt();
-//			input.nextLine();
-//			answerExist = multiQue.deleteAnswerById(selection);
-//
-//			if (!answerExist)
-//				System.out.println("Error! Answer dosen't exist!");
-//
-//		} while (!answerExist);
 
 	}
 
@@ -555,56 +534,6 @@ public class TestMaker {
 		System.out.println("-1 to exit");
 	}
 
-//	/**
-//	 * Ask the user to select an answer from the repo and retrives it
-//	 * 
-//	 * @param repo the program's repository
-//	 * @return the question that was selected
-//	 */
-//	private static Question selectQuestionFromRepo(Repo repo) {
-//		Scanner input = new Scanner(System.in);
-//		Question que = null;
-//		int selection = 0;
-//
-//		do {
-//			System.out.print(repo);
-//			System.out.println("Select a question: ");
-//			selection = input.nextInt();
-//			que = repo.getQuestionByID(selection);
-//
-//			if (que == null)
-//				System.out.println("Error! Question dosen't exist!");
-//
-//		} while (que == null);
-//
-//		return que;
-//	}
-
-//	/**
-//	 * Ask the user to select a question from the repo and retrives it
-//	 * 
-//	 * @param repo the program's repository
-//	 * @return the answers that was selected
-//	 */
-//	private static String selectAnswerFromRepo(Repo repo) {
-//		Scanner input = new Scanner(System.in);
-//		String ans = null;
-//		int selection = 0;
-//
-//		do {
-//			System.out.print(repo.toStringAnswers());
-//			System.out.println("Select an answer: ");
-//			selection = input.nextInt();
-//			ans = repo.getAnswerByIndex(--selection);
-//
-//			if (ans == null)
-//				System.out.println("Error! Answer dosen't exist!");
-//
-//		} while (ans == null);
-//
-//		return ans;
-//	}
-
 	// didn't use at the end
 	@SuppressWarnings("unused")
 	private static String inputPargraph() {
@@ -634,7 +563,7 @@ public class TestMaker {
 	 * @return difficulty from the user
 	 */
 	private static Difficulty getDifficultyFromUser() {
-		Difficulty[] difficulties = Difficulty.values(); //TODO: replace with collection
+		ArrayList<Difficulty> difficulties = new ArrayList<Difficulty>(Arrays.asList(Difficulty.values()));
 		int diff = 0;
 		boolean isValid = false;
 
@@ -647,13 +576,13 @@ public class TestMaker {
 			input.nextLine(); // clears buffer
 			diff--;
 
-			isValid = diff < difficulties.length && diff >= 0;
+			isValid = diff < difficulties.size() && diff >= 0;
 			if (!isValid)
 				System.out.println("Error! Difficulty dosen't exist, Try again!");
 
 		} while (!isValid);
 
-		return difficulties[diff];
+		return difficulties.get(diff);
 
 	}
 
@@ -661,8 +590,8 @@ public class TestMaker {
 	 * @param input where to read the subject from
 	 * @return subject from the user
 	 */
-	private static Subject getSubjectFromUser() { // sad i am not allowed to use generics
-		Subject[] subjects = Subject.values(); //TODO: replace with collection
+	private static Subject getSubjectFromUser() {
+		ArrayList<Subject> subjects = new ArrayList<Subject>(Arrays.asList(Subject.values())); 
 		int subject = 0;
 		boolean isValid = false;
 
@@ -678,13 +607,13 @@ public class TestMaker {
 			input.nextLine(); // clears buffer
 			subject--;//start from 0 instead of 1
 
-			isValid = subject < subjects.length && subject >= 0;
+			isValid = subject < subjects.size() && subject >= 0;
 			if (!isValid)
 				System.out.println("Error! Subject dosen't exist, Try again!");
 
 		} while (!isValid);
 
-		return subjects[subject];
+		return subjects.get(subject);
 	}
 	
 }

@@ -5,6 +5,10 @@ import java.util.Objects;
 
 public class OpenEndedQuestion extends Question implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = Repo.REPO_VERSION;
 	private String solution;
 
 	public OpenEndedQuestion(String text, String solution, Difficulty difficulty) {
