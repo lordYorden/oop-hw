@@ -1,36 +1,28 @@
 package yarden_perets_214816407;
 
-import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Scanner;
 
 //import java.util.Arrays;
 
 //import java.util.Scanner;
 
-public class Repo implements Serializable {
-
-	public enum Subject {
-		Math, Science, History, Geography
-	}
+public class Repo {
 
 	private String[] answers;
 	private Question[] questions;
 	private int numQuestions;
 	private int numAnswers;
-	private Subject subject;
 
 	/**
 	 * C'tor
 	 * 
 	 * Creates an answer array with the 2 defualt answers in the start
 	 */
-	public Repo(Subject subject) {
+	public Repo() {
 		this.answers = new String[2];
 		this.questions = null;
 		this.numQuestions = 0;
 		this.numAnswers = 0;
-		this.subject = subject;
 		addAnswer("No answer is correct"); // answers[0]
 		addAnswer("More then one answer is correct"); // answers[1]
 	}
@@ -44,7 +36,7 @@ public class Repo implements Serializable {
 	 */
 	public boolean addAnswer(String ansToAdd) {
 		if (doseAnswerExist(ansToAdd)) {
-			return false; // dose exist
+			return false; //dose exist
 		}
 
 		if (numAnswers >= answers.length) {
@@ -61,7 +53,7 @@ public class Repo implements Serializable {
 	 * @param queToAdd the question to add
 	 * @return whether the answer was added
 	 */
-	public boolean addQuestion(Question queToAdd) { // TODO: fix method to use SOLID
+	public boolean addQuestion(Question queToAdd) {
 		if (queToAdd == null)
 			return false;
 
@@ -75,7 +67,7 @@ public class Repo implements Serializable {
 
 		questions[numQuestions++] = queToAdd;
 
-		if (queToAdd instanceof MultiSelectQuestion) {
+		if(queToAdd instanceof MultiSelectQuestion) {
 			MultiSelectQuestion multiQ = (MultiSelectQuestion) queToAdd;
 			Answer[] answers = multiQ.getAnswers();
 			int numAnswers = multiQ.getNumAnswers();
@@ -83,10 +75,10 @@ public class Repo implements Serializable {
 			for (int i = 0; i < numAnswers; i++) {
 				this.addAnswer(answers[i].getText());
 			}
-		} else if (queToAdd instanceof OpenEndedQuestion) {
-			this.addAnswer(((OpenEndedQuestion) queToAdd).getSolution());
+		}else if (queToAdd instanceof OpenEndedQuestion) {
+			this.addAnswer(((OpenEndedQuestion)queToAdd).getSolution());
 		}
-
+		
 		return true;
 	}
 
@@ -98,25 +90,11 @@ public class Repo implements Serializable {
 	 * @return The question object
 	 */
 	public Question getQuestionByID(int id) {
-		for (Question curr : questions) {
-			if (curr.getId() == id)
+		for(Question curr: questions) {
+			if(curr.getId() == id)
 				return curr;
 		}
 		return null;
-	}
-
-	/**
-	 * @return the numAnswers
-	 */
-	public int getNumAnswers() {
-		return numAnswers;
-	}
-
-	/**
-	 * @param numAnswers the numAnswers to set
-	 */
-	public void setNumAnswers(int numAnswers) {
-		this.numAnswers = numAnswers;
 	}
 
 	/**
@@ -141,9 +119,9 @@ public class Repo implements Serializable {
 	 * @return whether the question was removed
 	 */
 	public boolean deleteQuestionById(int id) {
-
-		for (int i = 0; i < numQuestions; i++) {
-			if (questions[i].getId() == id) {
+		
+		for(int i = 0; i < numQuestions; i++) {
+			if(questions[i].getId() == id) {
 				questions[i] = questions[--numQuestions];
 				questions[numQuestions] = null;
 				return true;
@@ -161,11 +139,8 @@ public class Repo implements Serializable {
 		if (numQuestions == 0 || questions == null)
 			return "There are no question in the repo!\n";
 
-		builder.append("Subject: ");
-		builder.append(subject.name());
-		builder.append("\n");
-		builder.append("Questions in the repo:\n\n");
-		// builder.append(Arrays.toString(questions));
+		builder.append("Questions in the repo: \n\n");
+		//builder.append(Arrays.toString(questions));
 		for (int i = 0; i < numQuestions; i++) {
 //			builder.append(i + 1);
 //			builder.append(". ");
@@ -180,20 +155,6 @@ public class Repo implements Serializable {
 	 */
 	public int getNumQuestions() {
 		return numQuestions;
-	}
-
-	/**
-	 * @return the subject
-	 */
-	public Subject getSubject() {
-		return subject;
-	}
-
-	/**
-	 * @param subject the subject to set
-	 */
-	public void setSubject(Subject subject) {
-		this.subject = subject;
 	}
 
 	/**
@@ -214,6 +175,7 @@ public class Repo implements Serializable {
 		}
 		return builder.toString();
 	}
+
 
 	/**
 	 * Private helper method resizes the array of answers based on user input
@@ -260,57 +222,6 @@ public class Repo implements Serializable {
 	}
 
 	/**
-	 * Ask the user to select an answer from the repo and retrives it
-	 * 
-	 * @param repo the program's repository
-	 * @return the question that was selected
-	 */
-	public static Question selectQuestionFromRepo(Repo repo, Scanner input) {
-		// Scanner input = new Scanner(System.in);
-		Question que = null;
-		int selection = 0;
-
-		do {
-			System.out.print(repo);
-			System.out.println("Select a question: ");
-			selection = input.nextInt();
-			input.nextLine();
-			que = repo.getQuestionByID(selection);
-
-			if (que == null)
-				System.out.println("Error! Question dosen't exist!");
-
-		} while (que == null);
-
-		return que;
-	}
-
-	/**
-	 * Ask the user to select a question from the repo and retrives it
-	 * 
-	 * @param repo the program's repository
-	 * @return the answers that was selected
-	 */
-	public static String selectAnswerFromRepo(Repo repo, Scanner input) {
-		// Scanner input = new Scanner(System.in);
-		String ans = null;
-		int selection = 0;
-
-		do {
-			System.out.print(repo.toStringAnswers());
-			System.out.println("Select an answer: ");
-			selection = input.nextInt();
-			ans = repo.getAnswerByIndex(--selection);
-
-			if (ans == null)
-				System.out.println("Error! Answer dosen't exist!");
-
-		} while (ans == null);
-
-		return ans;
-	}
-
-	/**
 	 * Public helper method Genrates new answers objects of the defualt answers
 	 * based of question data provided
 	 * 
@@ -321,15 +232,15 @@ public class Repo implements Serializable {
 	public Answer[] generateDefaultAnswers(boolean noneCorrect, boolean moreThenOneCorrect) {
 		return new Answer[] { new Answer(answers[0], noneCorrect), new Answer(answers[1], moreThenOneCorrect) };
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Repo))
+		if(!(obj instanceof Repo))
 			return false;
-
+		
 		Repo other = (Repo) obj;
-
-		if (this.numAnswers != other.numAnswers || this.numQuestions != other.numQuestions)
+		
+		if(this.numAnswers != other.numAnswers || this.numQuestions != other.numQuestions)
 			return false;
 		return Arrays.equals(this.answers, other.answers) && Arrays.equals(this.questions, other.questions);
 	}

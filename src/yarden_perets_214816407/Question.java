@@ -1,8 +1,6 @@
 package yarden_perets_214816407;
 
-import java.io.Serializable;
-
-public class Question implements Serializable{
+public class Question {
 	
 	public enum Difficulty {Easy, Moderate, Hard}
 	private static int numQuestions = 1;
@@ -11,9 +9,10 @@ public class Question implements Serializable{
 	protected int id;
 	protected Difficulty difficulty;
 	protected boolean displaySolution;
-	
+
 	/**
 	 * C'tor
+	 * 
 	 * @param	text the question itself
 	 */
 	Question(String text, Difficulty difficulty) {
@@ -21,10 +20,6 @@ public class Question implements Serializable{
 		this.id = numQuestions++;
 		this.difficulty = difficulty;
 		this.displaySolution = false;
-	}
-	
-	public static void setNumQuestions(int numQuestions) {
-		Question.numQuestions = numQuestions;
 	}
 
 	/**

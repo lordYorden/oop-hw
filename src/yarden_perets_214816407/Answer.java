@@ -1,8 +1,6 @@
 package yarden_perets_214816407;
 
-import java.io.Serializable;
-
-public class Answer implements Serializable {
+public class Answer {
 	private String text;
 	private boolean isCorrect;
 	private boolean displaySolution;
@@ -72,12 +70,12 @@ public class Answer implements Serializable {
 		builder.append("\n");
 		return builder.toString();
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Answer))
+		if(!(obj instanceof Answer))
 			return false;
-
+		
 		Answer ans = (Answer) obj;
 		return (ans.text == this.text) && (ans.isCorrect == this.isCorrect);
 	}

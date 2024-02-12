@@ -1,8 +1,6 @@
 package yarden_perets_214816407;
 
-import java.io.Serializable;
-
-public class OpenEndedQuestion extends Question implements Serializable {
+public class OpenEndedQuestion extends Question{
 
 	private String solution;
 
@@ -10,7 +8,7 @@ public class OpenEndedQuestion extends Question implements Serializable {
 		super(text, difficulty);
 		this.solution = solution;
 	}
-
+	
 	public OpenEndedQuestion(OpenEndedQuestion other) {
 		super(other.text, other.difficulty);
 		this.solution = other.solution;
@@ -24,7 +22,7 @@ public class OpenEndedQuestion extends Question implements Serializable {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(super.toString());
-		if (displaySolution) {
+		if(displaySolution) {
 			builder.append("Solution: ");
 			builder.append(solution);
 			builder.append("\n");
@@ -32,15 +30,16 @@ public class OpenEndedQuestion extends Question implements Serializable {
 		builder.append("\n");
 		return builder.toString();
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof OpenEndedQuestion))
+		if(!(obj instanceof OpenEndedQuestion))
 			return false;
-
+		
 		OpenEndedQuestion que = (OpenEndedQuestion) obj;
-
+		
 		return super.equals(obj) && que.solution == solution;
 	}
-
+	
+	
 }
