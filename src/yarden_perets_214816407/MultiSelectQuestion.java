@@ -1,53 +1,71 @@
 package yarden_perets_214816407;
 
-import java.util.Arrays;
+import java.io.Serializable;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Scanner;
 
-public class MultiSelectQuestion extends Question {
-	private int numAnswers;
-	private Answer[] answers;
+public class MultiSelectQuestion extends Question implements Serializable, Iterable<Answer> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = Repo.REPO_VERSION;
+	private LinkedHashSet<Answer> answers;
 	private int numCorrect;
+	public static final int maxAnswersCpacity = 10;
 
 	/**
 	 * C'tor
 	 * 
-	 * @param	text the question itself
+	 * @param text the question itself
 	 */
 	MultiSelectQuestion(String text, Difficulty difficulty) {
 		super(text, difficulty);
-		this.numAnswers = 0;
 		this.numCorrect = 0;
-		this.answers = new Answer[10];
+		this.answers = new LinkedHashSet<>();
 	}
 
 	/**
 	 * copy c'tor
 	 * 
-	 * @param other   object to copy
+	 * @param other object to copy
 	 */
 	MultiSelectQuestion(MultiSelectQuestion other) {
 		super(other.text, other.difficulty);
 		this.numCorrect = other.numCorrect;
-		this.numAnswers = other.numAnswers;
-		this.answers = new Answer[10];
-		for (int i = 0; i < other.numAnswers; i++) {
-			this.answers[i] = new Answer(other.answers[i]);
+		this.answers = new LinkedHashSet<>(other.answers);
+	}
+
+	//for hard coded questions
+	public MultiSelectQuestion(String text, Difficulty difficulty, Answer[] answers) {
+		this(text, difficulty);
+		//count correct
+		for (Answer answer : answers) {
+			addAnswer(answer);
 		}
 	}
 
 	/**
 	 * @return the question's possible answers
 	 */
-	public Answer[] getAnswers() {
+	@Deprecated
+	public LinkedHashSet<Answer> getAnswers() {
 		return answers;
+	}
+
+	public void clear() {
+		this.answers.clear();
+		this.numCorrect = 0;
 	}
 
 	/**
 	 * @return number of possible answers
 	 */
 	public int getNumAnswers() {
-		return numAnswers;
+		return answers.size();
 	}
-	
+
 	/**
 	 * @return the number of correct answers
 	 */
@@ -72,7 +90,7 @@ public class MultiSelectQuestion extends Question {
 //		builder.append("\n");
 //		return builder.toString();
 //	}
-	
+
 	/**
 	 * @return object values
 	 */
@@ -80,63 +98,118 @@ public class MultiSelectQuestion extends Question {
 		StringBuilder builder = new StringBuilder();
 		builder.append(super.toString());
 
-		for (int i = 0; i < numAnswers; i++) {
-			builder.append(i + 1);
+		int i = 1;
+		for (Answer answer : answers) {
+			builder.append(i);//for a nice print
 			builder.append(". ");
-			answers[i].setDisplaySolution(displaySolution);
-			builder.append(answers[i].toString());
+			answer.setDisplaySolution(displaySolution);
+			builder.append(answer.toString());
+			i++;
 		}
 		builder.append("\n");
 		return builder.toString();
 	}
 
 	/**
-	 * adds and aswers to the question's possible answers
+	 * adds and answer to the question's possible answers
 	 * 
-	 * @param ansToAdd	answer given 
-	 * @return whether the answer was added 
+	 * @param ansToAdd answer given
+	 * @return whether the answer was added
 	 */
 	public boolean addAnswer(Answer ansToAdd) {
-		if (numAnswers >= answers.length) {
-			return false;//array full
+		
+		if (answers.size() >= maxAnswersCpacity) {
+			return false;// array full
 		}
-
-		answers[numAnswers++] = ansToAdd;
-		if(ansToAdd.isCorrect()) {
+		
+		//ansToAdd.setId(answers.size() + 1);//for a nice print
+		if (ansToAdd.isCorrect()) {
 			numCorrect++;
 		}
-		return true;
+		
+		return answers.add(ansToAdd);
 	}
-	
+
 	/**
-	 * deletes an answer 
-	 * @param index	 answer to be deleted
+	 * deletes an answer
+	 * 
+	 * @param index answer to be deleted
 	 * @return whether the answer was deleted
 	 */
-	public boolean deleteAnswerByIndex(int index) {
-		if (numAnswers <= 0 && answers != null) {
-			//System.out.println("Error! No more answers left to remove!");
+	//TODO: figure out how to resolve id
+	public boolean deleteAnswerById(int id) {
+		if(answers.isEmpty())
 			return false;
-		}
 		
-		if(numAnswers <= index || index < 0) {
-			return false;
-		}
-		
-		if(answers[index].isCorrect())
+		Answer ans = getAnswerById(id);
+		if(ans != null && ans.isCorrect())
 			numCorrect--;
 		
-		answers[index] = answers[--numAnswers];
-		answers[numAnswers] = null;
-		return true;
+		return answers.remove(ans);
 	}
 	
+	public Answer getAnswerById(int id) {		
+		for(Answer answer : answers) {
+			if(answer.getId() == id)
+				return answer;
+		}
+		return null;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(answers, numCorrect);
+		return result;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof MultiSelectQuestion))
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
 			return false;
-		
-		MultiSelectQuestion que = (MultiSelectQuestion) obj;
-		return super.equals(obj) && Arrays.equals(que.answers, this.answers);
+		if (getClass() != obj.getClass())
+			return false;
+		MultiSelectQuestion other = (MultiSelectQuestion) obj;
+		return Objects.equals(answers, other.answers) && numCorrect == other.numCorrect;
 	}
+
+	@Override
+	public Iterator<Answer> iterator() {
+		return answers.iterator();
+	}
+	
+	public static void deleteAnswerFromAQuestion(MultiSelectQuestion multiQue, Scanner input){
+		boolean answerExist = true;
+		int selection = 0;
+		
+		if (multiQue.getNumAnswers() == 0) {
+			System.out.println("Error! No answers to remove!");
+			return;
+		}
+		
+		do {
+			Iterator<Answer> it = multiQue.iterator();
+			
+			while(it.hasNext()) {
+				Answer ans = it.next();
+				ans.setDisplaySolution(false);
+				System.out.printf("ID: %d\n%s\n",ans.getId(), ans);
+			}
+			
+			System.out.println("Select Answers to remove (-1 to continue): ");
+			selection = input.nextInt();
+			input.nextLine();
+			
+			if (selection != -1)
+				answerExist = multiQue.deleteAnswerById(selection);
+
+			if (!answerExist)
+				System.out.println("Error! Answer dosen't exist!");
+
+		} while (selection != -1 || !answerExist);
+	}
+
 }

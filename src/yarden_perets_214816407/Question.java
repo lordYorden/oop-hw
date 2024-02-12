@@ -1,25 +1,35 @@
 package yarden_perets_214816407;
 
-public class Question {
+import java.io.Serializable;
+import java.util.Objects;
+
+public class Question implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = Repo.REPO_VERSION;
+
 	public enum Difficulty {Easy, Moderate, Hard}
 	private static int numQuestions = 1;
-	
 	protected String text;
 	protected int id;
 	protected Difficulty difficulty;
 	protected boolean displaySolution;
-
+	
 	/**
 	 * C'tor
-	 * 
-	 * @param	text the question itself
+	 * @param text the question itself
 	 */
 	Question(String text, Difficulty difficulty) {
 		this.text = text;
 		this.id = numQuestions++;
 		this.difficulty = difficulty;
 		this.displaySolution = false;
+	}
+	
+	public static void setNumQuestions(int numQuestions) {
+		Question.numQuestions = numQuestions;
 	}
 
 	/**
@@ -66,14 +76,21 @@ public class Question {
 		builder.append("\n");
 		return builder.toString();
 	}
-	
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(difficulty, text);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof Question))
+		if (this == obj)
+			return true;
+		if (obj == null)
 			return false;
-		
-		Question que = (Question) obj;
-		
-		return que.id == this.id && que.text == this.text && this.difficulty == que.difficulty;
+		if (getClass() != obj.getClass())
+			return false;
+		Question other = (Question) obj;
+		return difficulty == other.difficulty && Objects.equals(text, other.text);
 	}
 }
