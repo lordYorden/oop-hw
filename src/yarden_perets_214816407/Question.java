@@ -11,9 +11,10 @@ public class Question implements Serializable{
 	protected int id;
 	protected Difficulty difficulty;
 	protected boolean displaySolution;
-	
+
 	/**
 	 * C'tor
+	 * 
 	 * @param	text the question itself
 	 */
 	Question(String text, Difficulty difficulty) {
@@ -21,10 +22,6 @@ public class Question implements Serializable{
 		this.id = numQuestions++;
 		this.difficulty = difficulty;
 		this.displaySolution = false;
-	}
-	
-	public static void setNumQuestions(int numQuestions) {
-		Question.numQuestions = numQuestions;
 	}
 
 	/**
