@@ -1,8 +1,6 @@
 package yarden_perets_214816407;
 
-import java.io.Serializable;
-
-public class Answer implements Serializable{
+public class Answer {
 	private String text;
 	private boolean isCorrect;
 	private boolean displaySolution;

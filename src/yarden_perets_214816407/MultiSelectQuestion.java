@@ -1,9 +1,8 @@
 package yarden_perets_214816407;
 
-import java.io.Serializable;
 import java.util.Arrays;
 
-public class MultiSelectQuestion extends Question implements Serializable{
+public class MultiSelectQuestion extends Question {
 	private int numAnswers;
 	private Answer[] answers;
 	private int numCorrect;

@@ -1,8 +1,6 @@
 package yarden_perets_214816407;
 
-import java.io.Serializable;
-
-public class Question implements Serializable{
+public class Question {
 	
 	public enum Difficulty {Easy, Moderate, Hard}
 	private static int numQuestions = 1;
