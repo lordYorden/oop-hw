@@ -15,7 +15,6 @@ public abstract class Question implements Serializable, Comparable<Integer>, Sol
 	protected String text;
 	protected int id;
 	protected Difficulty difficulty;
-	//protected boolean displaySolution;
 	
 	/**
 	 * C'tor
@@ -39,14 +38,6 @@ public abstract class Question implements Serializable, Comparable<Integer>, Sol
 	 */
 	Question(Question other) {
 		this(other.text, other.difficulty);
-	}
-
-	/**
-	 * @param displaySolution wheather 
-	 */
-	@Deprecated
-	public void setDisplaySolution(boolean displaySolution) {
-		//this.displaySolution = displaySolution;
 	}
 
 	/**

@@ -12,69 +12,6 @@ public class AutomaticExam extends Exam {
 		super(maxNumQue);
 		this.generated = new HashSet<>();
 	}
-
-//	@Override @Deprecated
-//	public void createExam(Repo repo){
-//		QuestionManager questionManager = repo.getQuestions();
-//		int maxRange = questionManager.getNumQuestions();
-//		
-//		
-//		int genQue = 0;
-//		boolean skip = false;
-//		for (int i = 0; i < maxNumQue; i++) {
-//			skip = false;
-//			
-//			genQue = rnd.nextInt(maxRange);
-//			Question questionSelected = questionManager.getQuestion(genQue);
-//			if(questionSelected == null){
-//				//skip iteration
-//				skip = true;
-//			}
-//			
-//			
-//			if(!skip) {
-//				if (questionSelected instanceof OpenEndedQuestion) {
-//					this.addQuestion((Question) new OpenEndedQuestion((OpenEndedQuestion) questionSelected));
-//	
-//				} else if (questionSelected instanceof MultiSelectQuestion) {
-//					MultiSelectQuestion multiGen = new MultiSelectQuestion((MultiSelectQuestion) questionSelected);
-//					multiGen.clear();
-//	
-//					// generate 4 answers
-//					int correctIndex = rnd.nextInt(MIN_ANSWERS_PER_QUESTION);
-//					generated = new HashSet<>();
-//					for (int j = 0; j < MIN_ANSWERS_PER_QUESTION; j++) {
-//						Answer ans = null;
-//						boolean wasGen = false;
-//						do {
-//							ans = generateAnswerFromRepo(j == correctIndex, repo);
-//							wasGen = generated.contains(ans);
-//							if(!wasGen) {
-//								generated.add(ans);
-//							}
-//						} while (wasGen);
-//						multiGen.addAnswer(ans);
-//					}
-//					
-//					try {
-//						this.addQuestion(multiGen, repo);
-//					} catch (NumOfAnswersException e) {
-//						skip = true;
-//					}
-//				}
-//			}
-//			
-//			if(!generated.isEmpty())
-//				generated.clear();
-//
-//			
-//			if(skip || questions.getNumQuestions() != i+1) 
-//			{
-//				i--;// didn't find question or duplicate
-//			}
-//		}
-//
-//	}
 	
 	public Answer generateAnswerFromRepo(boolean isCorrect, Repo repo) {
 		int genAnsId = rnd.nextInt(repo.getNumAnswers() - 2) + 1; // not include default answers

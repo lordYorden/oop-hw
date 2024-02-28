@@ -10,7 +10,6 @@ public class Answer implements Serializable, Solutionable{
 	private static final long serialVersionUID = Repo.REPO_VERSION;
 	private String text;
 	private boolean isCorrect;
-	//private boolean displaySolution;
 	private int id; //specific for every container
 
 	/**
@@ -47,14 +46,6 @@ public class Answer implements Serializable, Solutionable{
 	public Answer(Answer other) {
 		this(other.text, other.isCorrect);
 		this.id = other.id;
-	}
-
-	/**
-	 * @param displaySolution the displaySolution to set
-	 */
-	@Deprecated
-	public void setDisplaySolution(boolean displaySolution) {
-		//this.displaySolution = displaySolution;
 	}
 
 	/**

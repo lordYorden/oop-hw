@@ -56,32 +56,6 @@ public class Repo implements Serializable {
 		return answers.add(newAns);
 	}
 
-	/**
-	 * Adds the question to the array resizes it if needed
-	 * 
-	 * @param queToAdd the question to add
-	 * @return whether the answer was added
-	 */
-	@Deprecated
-	public boolean addQuestion(Question queToAdd) { 
-		return false;//questions.add(queToAdd);
-	}
-
-	/**
-	 * Checks if the index entered is valid then return null/The question based on
-	 * it
-	 * 
-	 * @param id The question id
-	 * @return The question object
-	 */
-	@Deprecated
-	public Question getQuestionByID(int id) {
-//		for (Question curr : questions) {
-//			if (curr.getId() == id)
-//				return curr;
-//		}
-		return null;
-	}
 
 	/**
 	 * @return the numAnswers
@@ -107,20 +81,6 @@ public class Repo implements Serializable {
 	}
 
 	/**
-	 * delete the question in the array by replacing it with the end and nullifying
-	 * it
-	 * 
-	 * @param id the question to remove id
-	 * @return whether the question was removed
-	 */
-	@Deprecated
-	public boolean deleteQuestionById(int id) {
-		if(questions.isEmpty())
-			return false;
-		return false;//questions.remove(getQuestionByID(id));
-	}
-
-	/**
 	 * @return object values
 	 */
 	public String toString() {
@@ -140,14 +100,6 @@ public class Repo implements Serializable {
 //			builder.append(question.toString());
 //		}
 		return builder.toString();
-	}
-
-	/**
-	 * @return number of questions in the repo
-	 */
-	@Deprecated
-	public int getNumQuestions() {
-		return 0;//questions.size();
 	}
 
 	/**
@@ -182,57 +134,6 @@ public class Repo implements Serializable {
 			builder.append("\n");
 		}
 		return builder.toString();
-	}
-
-	/**
-	 * Private helper method resizes the array of answers based on user input
-	 * 
-	 * @param size new size
-	 */
-	@SuppressWarnings("unused")
-	@Deprecated
-	private void resizeAnswers(int size) {
-//		String[] newAnswers = new String[size];
-//		for (int i = 0; i < answers.length; i++) {
-//			newAnswers[i] = answers[i];
-//		}
-//
-//		this.answers = newAnswers;
-	}
-
-	/**
-	 * Private helper method resizes the array of questions based on user input
-	 * 
-	 * @param size new size
-	 */
-	@SuppressWarnings("unused")
-	@Deprecated
-	private void resizeQuestions(int size) {
-//		Question[] newQuestions = new Question[size];
-//		for (int i = 0; i < questions.length; i++) {
-//			newQuestions[i] = questions[i];
-//		}
-//
-//		this.questions = newQuestions;
-	}
-
-	/**
-	 * Private helper method Searches the answers array for a muching answer to the
-	 * one given
-	 * 
-	 * @param answer The answer to search for
-	 * @return whether it was found
-	 */
-	@SuppressWarnings("unused")
-	@Deprecated
-	private boolean doseAnswerExist(Answer answer) {
-//		for (int i = 0; i < numAnswers; i++) {
-//			if (answers[i].equals(answer)) {
-//				return true;
-//			}
-//		}
-//		return false;
-		return answers.contains(answer);
 	}
 
 	/**
