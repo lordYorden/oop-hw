@@ -2,17 +2,15 @@ package yarden_perets_214816407;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.Objects;
 
 public abstract class Exam implements Examable {
 	private String date;
-	protected LinkedHashSet<Question> questions; 
+	protected /*LinkedHashSet<Question>*/QuestionManager questions; 
 	private boolean displaySolution;
 	public static int maxQuestionCapacity = 10;
 	protected int maxNumQue;
@@ -29,10 +27,9 @@ public abstract class Exam implements Examable {
 		if (maxNumQue > maxQuestionCapacity)
 			throw new NumOfQuestionsException(maxNumQue);
 
-		questions = new LinkedHashSet<>();
+		questions = new QuestionManager();
 		this.maxNumQue = maxNumQue;
 		displaySolution = false;
-		//currNumQue = 0;
 		this.date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm"));
 	}
 
@@ -44,13 +41,13 @@ public abstract class Exam implements Examable {
 	 * @throws NumOfQuestionsException
 	 */
 	public boolean addQuestion(Question queToAdd) throws NumOfQuestionsException {
-		if (questions.size() >= maxNumQue) {
-			throw new NumOfQuestionsException(questions.size() + 1, maxNumQue);
+		if (questions.getNumQuestions() >= maxNumQue) {
+			throw new NumOfQuestionsException(questions.getNumQuestions() + 1, maxNumQue);
 			// System.out.println("Error! No more question could be added, reached full
 			// capacity");
 		}
 
-		return questions.add(queToAdd);
+		return questions.addQuestion(queToAdd);
 	}
 
 	public boolean addQuestion(MultiSelectQuestion queToAdd, Repo repo)
@@ -71,12 +68,11 @@ public abstract class Exam implements Examable {
 	 * @return object to string
 	 */
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-				
-		for (Question question : questions) {			
-			question.setDisplaySolution(displaySolution);
-			builder.append(question.toString());	
-		}
+		StringBuilder builder = new StringBuilder();	
+		if(displaySolution)
+			builder.append(questions.getSolution());
+		else
+			builder.append(questions.toString());	
 		return builder.toString();
 	}
 
@@ -108,8 +104,21 @@ public abstract class Exam implements Examable {
 		Exam other = (Exam) obj;
 		return maxNumQue == other.maxNumQue && Objects.equals(questions, other.questions);
 	}
-
+	
 	@Override
-	public abstract void createExam(Repo repo) throws IOException;
+	public void createExam(Repo repo) {
+		
+		for (int i = 0; i < maxNumQue; i++) {
+			Question que = getQuestion(repo);
+			if(que != null) {
+				this.addQuestion(que);
+			}
+			
+			if(que == null || questions.getNumQuestions() != i+1) 
+			{
+				i--;// didn't find question or duplicate
+			}
+		}
+	}
 
 }

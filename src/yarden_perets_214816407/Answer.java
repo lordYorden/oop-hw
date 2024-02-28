@@ -3,14 +3,14 @@ package yarden_perets_214816407;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Answer implements Serializable {
+public class Answer implements Serializable, Solutionable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = Repo.REPO_VERSION;
 	private String text;
 	private boolean isCorrect;
-	private boolean displaySolution;
+	//private boolean displaySolution;
 	private int id; //specific for every container
 
 	/**
@@ -23,7 +23,7 @@ public class Answer implements Serializable {
 		this.text = answer;
 		this.id = 0;
 		this.isCorrect = isCorrect;
-		this.displaySolution = false;
+		//this.displaySolution = false;
 	}
 
 
@@ -52,8 +52,9 @@ public class Answer implements Serializable {
 	/**
 	 * @param displaySolution the displaySolution to set
 	 */
+	@Deprecated
 	public void setDisplaySolution(boolean displaySolution) {
-		this.displaySolution = displaySolution;
+		//this.displaySolution = displaySolution;
 	}
 
 	/**
@@ -82,14 +83,7 @@ public class Answer implements Serializable {
 	 */
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		// builder.append("answer: ");
 		builder.append(text);
-		if (displaySolution) {
-			builder.append(" [");
-			builder.append(isCorrect ? "x" : " ");
-			builder.append("]");
-		}
-
 		builder.append("\n");
 		return builder.toString();
 	}
@@ -113,6 +107,17 @@ public class Answer implements Serializable {
 			return false;
 		Answer other = (Answer) obj;
 		return Objects.equals(text, other.text);
+	}
+
+
+	@Override
+	public String getSolution() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(text);
+		builder.append(" [");
+		builder.append(isCorrect ? "x" : " ");
+		builder.append("]\n");
+		return builder.toString();
 	}
 
 }

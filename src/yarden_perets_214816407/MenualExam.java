@@ -1,5 +1,4 @@
 package yarden_perets_214816407;
-import java.io.IOException;
 import java.util.Scanner;
 
 public class MenualExam extends Exam {
@@ -11,55 +10,54 @@ public class MenualExam extends Exam {
 		this.input = input;
 	}
 
-	@Override
-	public void createExam(Repo repo) throws IOException {
-		Question fromRepo = null;
-
-		for (int i = 0; i < maxNumQue; i++) {
-			fromRepo = Repo.selectQuestionFromRepo(repo, input);
-
-			if (fromRepo instanceof OpenEndedQuestion) {
-				
-				try {
-					this.addQuestion(new OpenEndedQuestion((OpenEndedQuestion) fromRepo));
-					System.out.println("The question was successfully added!");
-				} catch (NumOfQuestionsException e) {
-					System.out.println("Error! " + e);
-					break;
-				}
-			} else {
-				MultiSelectQuestion toAdd = new MultiSelectQuestion((MultiSelectQuestion) fromRepo);
-	
-				try {
-					MultiSelectQuestion.deleteAnswerFromAQuestion(toAdd, input);
-					this.addQuestion(toAdd, repo);
-					System.out.println("The question was successfully added!");
-					
-				} catch (NumOfAnswersException e) {
-					System.out.println("Error! " + e.getMessage());
-					System.out.println("Press any key to continue...");
-					System.in.read();
-					i--;
-					continue;
-	
-				} catch (NumOfQuestionsException e) {
-					System.out.println("Error! " + e.getMessage());
-					System.out.println("Press any key to continue...");
-					System.in.read();
-					break;
-				}
-			}
-			
-			if(questions.size() != i+1) 
-			{
-				System.out.println("Error! Duplicate question cannot be entered!");
-				System.out.println("Press any key to continue...");
-				System.in.read();
-				i--;//duplicate
-			}
-		}
-
-	}
+//	@Override @Deprecated
+//	public void createExam(Repo repo) {
+//		Question fromRepo = null;
+//
+//		for (int i = 0; i < maxNumQue; i++) {
+//			fromRepo = Repo.selectQuestionFromRepo(repo, input);
+//
+//			if (fromRepo instanceof OpenEndedQuestion) {
+//				
+//				try {
+//					this.addQuestion(new OpenEndedQuestion((OpenEndedQuestion) fromRepo));
+//					System.out.println("The question was successfully added!");
+//				} catch (NumOfQuestionsException e) {
+//					System.out.println("Error! " + e);
+//					break;
+//				}
+//			} else {
+//				MultiSelectQuestion toAdd = new MultiSelectQuestion((MultiSelectQuestion) fromRepo);
+//	
+//				try {
+//					MultiSelectQuestion.deleteAnswersFromAQuestion(toAdd, input);
+//					this.addQuestion(toAdd, repo);
+//					System.out.println("The question was successfully added!");
+//					
+//				} catch (NumOfAnswersException e) {
+//					System.out.println("Error! " + e.getMessage());
+//					System.out.println("Press any key to continue...");
+//					//System.in.read();
+//					i--;
+//					continue;
+//				} catch (NumOfQuestionsException e) {
+//					System.out.println("Error! " + e.getMessage());
+//					System.out.println("Press any key to continue...");
+//					//System.in.read();
+//					break;
+//				}
+//			}
+//			
+//			if(questions.getNumQuestions() != i+1) 
+//			{
+//				System.out.println("Error! Duplicate question cannot be entered!");
+//				System.out.println("Press any key to continue...");
+//				//System.in.read();
+//				i--;//duplicate
+//			}
+//		}
+//
+//	}
 	
 	@Deprecated
 	public static void deleteAnswerFromAQuestion(MultiSelectQuestion multiQue, Scanner input) throws NumOfAnswersException {
@@ -84,5 +82,32 @@ public class MenualExam extends Exam {
 
 		} while (selection != -1 || !answerExist);
 	}
+
+	@Override
+	public Question getQuestion(Repo repo) {
+		Question fromRepo = Repo.selectQuestionFromRepo(repo, input);
+		if(fromRepo == null){
+			System.out.println("Error! Somthing went worng while Adding question!");
+			return null;
+		}
+
+		if (fromRepo instanceof MultiSelectQuestion) {
+			MultiSelectQuestion toAdd = new MultiSelectQuestion((MultiSelectQuestion) fromRepo);
+
+			try {
+				MultiSelectQuestion.deleteAnswersFromAQuestion(toAdd, input);
+			} catch (NumOfAnswersException e) {
+				System.out.println("Error! " + e.getMessage());
+				System.out.println("Press any key to continue...");
+				input.nextLine();
+				return null;
+			}
+			
+			return toAdd; //new Multi select
+		}
+		
+		return new OpenEndedQuestion((OpenEndedQuestion) fromRepo); //new open ended
+	}
+			
 
 }

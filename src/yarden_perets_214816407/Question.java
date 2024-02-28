@@ -3,7 +3,7 @@ package yarden_perets_214816407;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Question implements Serializable{
+public abstract class Question implements Serializable, Comparable<Integer>, Solutionable{
 	
 	/**
 	 * 
@@ -15,7 +15,7 @@ public class Question implements Serializable{
 	protected String text;
 	protected int id;
 	protected Difficulty difficulty;
-	protected boolean displaySolution;
+	//protected boolean displaySolution;
 	
 	/**
 	 * C'tor
@@ -25,7 +25,7 @@ public class Question implements Serializable{
 		this.text = text;
 		this.id = numQuestions++;
 		this.difficulty = difficulty;
-		this.displaySolution = false;
+		//this.displaySolution = false;
 	}
 	
 	public static void setNumQuestions(int numQuestions) {
@@ -44,8 +44,9 @@ public class Question implements Serializable{
 	/**
 	 * @param displaySolution wheather 
 	 */
+	@Deprecated
 	public void setDisplaySolution(boolean displaySolution) {
-		this.displaySolution = displaySolution;
+		//this.displaySolution = displaySolution;
 	}
 
 	/**
@@ -93,4 +94,19 @@ public class Question implements Serializable{
 		Question other = (Question) obj;
 		return difficulty == other.difficulty && Objects.equals(text, other.text);
 	}
+
+	@Override
+	public int compareTo(Integer key) {
+		return this.id - key;
+	}
+
+	@Override
+	public String getSolution() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(this.toString());
+		builder.append("Solution: ");
+		return builder.toString();
+	}
+	
+	
 }

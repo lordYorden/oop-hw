@@ -1,6 +1,6 @@
 package yarden_perets_214816407;
 
-public class ExamCreationException extends Exception {
+public class ExamCreationException extends RuntimeException {
 
 	/**
 	 * 

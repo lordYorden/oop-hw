@@ -90,7 +90,7 @@ public class TestMaker {
 		ObjectInputStream toLoad = new ObjectInputStream(new FileInputStream(filename));
 		Repo repo = (Repo) toLoad.readObject();
 		toLoad.close();
-		Question.setNumQuestions(repo.getNumQuestions() + 1);
+		Question.setNumQuestions(repo.getQuestions().getNumQuestions() + 1);
 		return repo;
 	}
 
@@ -161,7 +161,7 @@ public class TestMaker {
 			System.out.println("Select an Question to remove: ");
 			id = input.nextInt();
 			input.nextLine();
-			questionExist = repo.deleteQuestionById(id);
+			questionExist = repo.getQuestions().deleteQuestion(id);
 
 			if (!questionExist)
 				System.out.println("Error! Question dosen't exist!");
@@ -185,7 +185,7 @@ public class TestMaker {
 		}
 
 		MultiSelectQuestion multiQue = (MultiSelectQuestion) que;
-		MultiSelectQuestion.deleteAnswerFromAQuestion(multiQue, input);
+		MultiSelectQuestion.deleteAnswersFromAQuestion(multiQue, input);
 
 	}
 
@@ -271,7 +271,7 @@ public class TestMaker {
 	
 	private static boolean addQuestion(Repo repo, MultiSelectQuestion que) 
 	{
-		boolean res = repo.addQuestion(que);
+		boolean res = repo.getQuestions().addQuestion(que);
 		if(res) {
 			for (Answer answer : que) {
 				repo.addAnswer(answer);
@@ -283,9 +283,9 @@ public class TestMaker {
 	private static boolean addQuestion(Repo repo, OpenEndedQuestion que) 
 	{
 
-		boolean res = repo.addQuestion(que);
+		boolean res = repo.getQuestions().addQuestion(que);
 		if(res)
-			repo.addAnswer(que.getSolution());
+			repo.addAnswer(que.getAnswer());
 		return res;
 	}
 

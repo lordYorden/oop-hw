@@ -2,7 +2,6 @@ package yarden_perets_214816407;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 
@@ -21,7 +20,7 @@ public class Repo implements Serializable {
 	}
 
 	private LinkedHashSet<Answer> answers;
-	private HashSet<Question> questions;
+	private QuestionManager questions;/* LinkedHashSet<Question> questions; */
 	private Subject subject;
 
 	/**
@@ -31,7 +30,7 @@ public class Repo implements Serializable {
 	 */
 	public Repo(Subject subject) {
 		this.answers = new LinkedHashSet<>();
-		this.questions = new HashSet<>();
+		this.questions = new QuestionManager();
 		this.subject = subject;
 		addAnswer("No answer is correct"); // answers[0]
 		addAnswer("More then one answer is correct"); // answers[1]
@@ -63,8 +62,9 @@ public class Repo implements Serializable {
 	 * @param queToAdd the question to add
 	 * @return whether the answer was added
 	 */
+	@Deprecated
 	public boolean addQuestion(Question queToAdd) { 
-		return questions.add(queToAdd);
+		return false;//questions.add(queToAdd);
 	}
 
 	/**
@@ -74,11 +74,12 @@ public class Repo implements Serializable {
 	 * @param id The question id
 	 * @return The question object
 	 */
+	@Deprecated
 	public Question getQuestionByID(int id) {
-		for (Question curr : questions) {
-			if (curr.getId() == id)
-				return curr;
-		}
+//		for (Question curr : questions) {
+//			if (curr.getId() == id)
+//				return curr;
+//		}
 		return null;
 	}
 
@@ -112,10 +113,11 @@ public class Repo implements Serializable {
 	 * @param id the question to remove id
 	 * @return whether the question was removed
 	 */
+	@Deprecated
 	public boolean deleteQuestionById(int id) {
 		if(questions.isEmpty())
 			return false;
-		return questions.remove(getQuestionByID(id));
+		return false;//questions.remove(getQuestionByID(id));
 	}
 
 	/**
@@ -131,19 +133,21 @@ public class Repo implements Serializable {
 		builder.append(subject.name());
 		builder.append("\n");
 		builder.append("Questions in the repo:\n\n");
+		builder.append(questions.toString());
 		
-		for(Question question : questions) {
-			question.setDisplaySolution(false);
-			builder.append(question.toString());
-		}
+//		for(Question question : questions) {
+//			question.setDisplaySolution(false);
+//			builder.append(question.toString());
+//		}
 		return builder.toString();
 	}
 
 	/**
 	 * @return number of questions in the repo
 	 */
+	@Deprecated
 	public int getNumQuestions() {
-		return questions.size();
+		return 0;//questions.size();
 	}
 
 	/**
@@ -174,7 +178,6 @@ public class Repo implements Serializable {
 			builder.append("ID: ");
 			builder.append(ans.getId());
 			builder.append("\n");
-			ans.setDisplaySolution(false);
 			builder.append(ans);
 			builder.append("\n");
 		}
@@ -248,7 +251,7 @@ public class Repo implements Serializable {
 			System.out.println("Select a question: ");
 			selection = input.nextInt();
 			input.nextLine();
-			que = repo.getQuestionByID(selection);
+			que = repo.questions.getQuestion(selection);
 
 			if (que == null)
 				System.out.println("Error! Question dosen't exist!");
@@ -319,4 +322,8 @@ public class Repo implements Serializable {
 		return questions.equals(other.questions);
 	}
 
+	public QuestionManager getQuestions() {
+		return questions;
+	}
+	
 }

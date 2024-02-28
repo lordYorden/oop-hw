@@ -102,7 +102,6 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 		for (Answer answer : answers) {
 			builder.append(i);//for a nice print
 			builder.append(". ");
-			answer.setDisplaySolution(displaySolution);
 			builder.append(answer.toString());
 			i++;
 		}
@@ -181,7 +180,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 		return answers.iterator();
 	}
 	
-	public static void deleteAnswerFromAQuestion(MultiSelectQuestion multiQue, Scanner input){
+	public static void deleteAnswersFromAQuestion(MultiSelectQuestion multiQue, Scanner input){
 		boolean answerExist = true;
 		int selection = 0;
 		
@@ -195,7 +194,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 			
 			while(it.hasNext()) {
 				Answer ans = it.next();
-				ans.setDisplaySolution(false);
+				//ans.setDisplaySolution(false);
 				System.out.printf("ID: %d\n%s\n",ans.getId(), ans);
 			}
 			
@@ -210,6 +209,27 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 				System.out.println("Error! Answer dosen't exist!");
 
 		} while (selection != -1 || !answerExist);
+		
+		if(multiQue.getNumAnswers() < Exam.MIN_ANSWERS_PER_QUESTION) {
+			throw new NumOfAnswersException(multiQue.getNumAnswers());
+		}
+	}
+
+	@Override
+	public String getSolution() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(super.getSolution());
+		builder.append("\n");
+
+		int i = 1;
+		for (Solutionable answer : answers) {
+			builder.append(i);//for a nice print
+			builder.append(". ");
+			builder.append(answer.getSolution());
+			i++;
+		}
+		builder.append("\n");
+		return builder.toString();
 	}
 
 }

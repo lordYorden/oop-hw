@@ -9,31 +9,38 @@ public class OpenEndedQuestion extends Question implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = Repo.REPO_VERSION;
-	private String solution;
+	private String answer;
 
 	public OpenEndedQuestion(String text, String solution, Difficulty difficulty) {
 		super(text, difficulty);
-		this.solution = solution;
+		this.answer = solution;
 	}
 
 	public OpenEndedQuestion(OpenEndedQuestion other) {
 		super(other.text, other.difficulty);
-		this.solution = other.solution;
+		this.answer = other.answer;
+	}
+
+	public String getAnswer() {
+		return answer;
+	}
+
+	public void setAnswer(String answer) {
+		this.answer = answer;
 	}
 
 	public String getSolution() {
-		return solution;
+		StringBuilder builder = new StringBuilder();
+		builder.append(super.getSolution());
+		builder.append(this.answer);
+		builder.append("\n\n");
+		return builder.toString();
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(super.toString());
-		if (displaySolution) {
-			builder.append("Solution: ");
-			builder.append(solution);
-			builder.append("\n");
-		}
 		builder.append("\n");
 		return builder.toString();
 	}
@@ -42,7 +49,7 @@ public class OpenEndedQuestion extends Question implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(solution);
+		result = prime * result + Objects.hash(answer);
 		return result;
 	}
 
@@ -55,7 +62,7 @@ public class OpenEndedQuestion extends Question implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		OpenEndedQuestion other = (OpenEndedQuestion) obj;
-		return Objects.equals(solution, other.solution);
+		return Objects.equals(answer, other.answer);
 	}
 
 }
