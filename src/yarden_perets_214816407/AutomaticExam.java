@@ -13,9 +13,10 @@ public class AutomaticExam extends Exam {
 		this.generated = new HashSet<>();
 	}
 	
-	public Answer generateAnswerFromRepo(boolean isCorrect, Repo repo) {
-		int genAnsId = rnd.nextInt(repo.getNumAnswers() - 2) + 1; // not include default answers
-		Answer ans = repo.getAnswerById(genAnsId);
+	public Answer generateAnswerFromRepo(boolean isCorrect, AnswerManager answers) {
+		
+		int genAnsId = rnd.nextInt(answers.size() - 2) + 1; // not include default answers
+		Answer ans = answers.getAnswer(genAnsId);
 		ans = new Answer(ans);
 		ans.setCorrect(isCorrect);
 		return ans;	
@@ -43,7 +44,7 @@ public class AutomaticExam extends Exam {
 				Answer ans = null;
 				boolean wasGen = false;
 				do {
-					ans = generateAnswerFromRepo(j == correctIndex, repo);
+					ans = generateAnswerFromRepo(j == correctIndex, repo.getAnswers());
 					wasGen = generated.contains(ans);
 					if(!wasGen) {
 						generated.add(ans);

@@ -109,7 +109,11 @@ public abstract class Exam implements Examable {
 		for (int i = 0; i < maxNumQue; i++) {
 			Question que = getQuestion(repo);
 			if(que != null) {
-				this.addQuestion(que);
+				
+				if(que instanceof MultiSelectQuestion)
+					this.addQuestion((MultiSelectQuestion)que, repo);
+				else
+					this.addQuestion(que);
 			}
 			
 			if(que == null || questions.getNumQuestions() != i+1) 

@@ -67,3 +67,15 @@ Changes are described per Breach
 - Examble has now a method that return A question from repo
   both AutomaticExam and MenualExam no longer craeted the exam and add questions, Instead the Abstract Class Exam usess the new mehtod to get a question to add, without knowing how.
 - Breached priciples that were fixed (2, 5).
+
+### Repo got an Interface DefaultAnswers
+
+> *Name is a work in progress
+
+- Repo has 2 new methods for the default answers. each of them get a boolean and Returns answer to fit it. Exam now uses it to genarate the default answers for each question.
+- Breaches principle that were fixed (2,5).
+
+### Both MultiSelectQuestion and Repo got a new member, Answer Manager
+
+* Not only you could have used only ID before to find a Answer, both Repo and MultiSelectQuestion Contained a collection of Answers that basaicly did the same thing.
+* Breached priciples that were fixed (1, 2).

@@ -2,7 +2,6 @@ package yarden_perets_214816407;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.Scanner;
 
 //import java.util.Arrays;
@@ -11,7 +10,7 @@ import java.util.Scanner;
 
 public class Repo implements Serializable, DefualtAnswers{
 
-	public static final int REPO_VERSION = 4;//define the project version
+	public static final int REPO_VERSION = 5;//define the project version
 	
 	private static final long serialVersionUID = REPO_VERSION;
 
@@ -19,8 +18,8 @@ public class Repo implements Serializable, DefualtAnswers{
 		Math, Science, History, Geography
 	}
 
-	private LinkedHashSet<Answer> answers;
-	private QuestionManager questions;/* LinkedHashSet<Question> questions; */
+	private AnswerManager answers;
+	private QuestionManager questions;
 	private Subject subject;
 
 	/**
@@ -29,7 +28,7 @@ public class Repo implements Serializable, DefualtAnswers{
 	 * Creates an answer array with the 2 default answers in the start
 	 */
 	public Repo(Subject subject) {
-		this.answers = new LinkedHashSet<>();
+		this.answers = new AnswerManager();
 		this.questions = new QuestionManager();
 		this.subject = subject;
 		addAnswer("No answer is correct"); // answers[0]
@@ -45,21 +44,22 @@ public class Repo implements Serializable, DefualtAnswers{
 	 */
 	public boolean addAnswer(Answer ansToAdd) {	
 		ansToAdd.setId(answers.size()); //update id based on repo
-		Answer newAns = new Answer(ansToAdd);
-		newAns.setId(answers.size());
-		return answers.add(newAns);
+		return answers.addAnswer(ansToAdd);
 	}
 	
 	public boolean addAnswer(String ansToAdd) {	
 		Answer newAns = new Answer(ansToAdd, false); //Default
-		newAns.setId(answers.size());
-		return answers.add(newAns);
+		return addAnswer(newAns);
 	}
 
+	public AnswerManager getAnswers() {
+		return answers;
+	}
 
 	/**
 	 * @return the numAnswers
 	 */
+	@Deprecated
 	public int getNumAnswers() {
 		return answers.size();
 	}
@@ -72,11 +72,12 @@ public class Repo implements Serializable, DefualtAnswers{
 	 * @return The answer object
 	 */
 	//TODO: update comment
+	@Deprecated
 	public Answer getAnswerById(int id) {		
-		for(Answer answer : answers) {
-			if(answer.getId() == id)
-				return answer;
-		}
+//		for(Answer answer : answers) {
+//			if(answer.getId() == id)
+//				return answer;
+//		}
 		return null;
 	}
 
@@ -126,13 +127,14 @@ public class Repo implements Serializable, DefualtAnswers{
 			return "There are no answers in the repo!\n";
 
 		builder.append("Answers in the repo: \n");
-		for(Answer ans : answers) {
-			builder.append("ID: ");
-			builder.append(ans.getId());
-			builder.append("\n");
-			builder.append(ans);
-			builder.append("\n");
-		}
+		builder.append(answers.toString());
+//		for(Answer ans : answers) {
+//			builder.append("ID: ");
+//			builder.append(ans.getId());
+//			builder.append("\n");
+//			builder.append(ans);
+//			builder.append("\n");
+//		}
 		return builder.toString();
 	}
 
@@ -180,7 +182,7 @@ public class Repo implements Serializable, DefualtAnswers{
 			if(selection <= 1) //Defaults
 				ans = null;
 			else
-				ans = repo.getAnswerById(selection);
+				ans = repo.getAnswers().getAnswer(selection);
 
 			if (ans == null)
 				System.out.println("Error! Answer dosen't exist!");
@@ -230,14 +232,16 @@ public class Repo implements Serializable, DefualtAnswers{
 
 	@Override
 	public Answer getNoneCorrect(boolean noneCorrect) {
-		Answer temp = new Answer(getAnswerById(0));
+		Answer temp = new Answer(answers.getAnswer(0));
+		temp.setId(answers.size()); //need to be in lower priority from all other answers
 		temp.setCorrect(noneCorrect);
 		return temp;
 	}
 
 	@Override
 	public Answer getMoreThenOneCorrect(boolean moreThenOneCorrect) {
-		Answer temp = new Answer(getAnswerById(1));
+		Answer temp = new Answer(answers.getAnswer(1));
+		temp.setId(answers.size()); //need to be in lower priority from all other answers
 		temp.setCorrect(moreThenOneCorrect);
 		return temp;
 	}

@@ -2,7 +2,6 @@ package yarden_perets_214816407;
 
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -11,7 +10,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	 * 
 	 */
 	private static final long serialVersionUID = Repo.REPO_VERSION;
-	private LinkedHashSet<Answer> answers;
+	private AnswerManager/*LinkedHashSet<Answer>*/ answers;
 	private int numCorrect;
 	public static final int maxAnswersCpacity = 10;
 
@@ -23,7 +22,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	MultiSelectQuestion(String text, Difficulty difficulty) {
 		super(text, difficulty);
 		this.numCorrect = 0;
-		this.answers = new LinkedHashSet<>();
+		this.answers = new AnswerManager();
 	}
 
 	/**
@@ -34,7 +33,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	MultiSelectQuestion(MultiSelectQuestion other) {
 		super(other.text, other.difficulty);
 		this.numCorrect = other.numCorrect;
-		this.answers = new LinkedHashSet<>(other.answers);
+		this.answers = new AnswerManager(other.answers);
 	}
 
 	//for hard coded questions
@@ -49,8 +48,12 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	/**
 	 * @return the question's possible answers
 	 */
-	@Deprecated
-	public LinkedHashSet<Answer> getAnswers() {
+//	@Deprecated
+//	public LinkedHashSet<Answer> getAnswers() {
+//		//return answers;
+//	}
+	
+	public AnswerManager getAnswers() {
 		return answers;
 	}
 
@@ -97,14 +100,15 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(super.toString());
+		builder.append(answers.toString());
 
-		int i = 1;
-		for (Answer answer : answers) {
-			builder.append(i);//for a nice print
-			builder.append(". ");
-			builder.append(answer.toString());
-			i++;
-		}
+//		int i = 1;
+//		for (Answer answer : answers) {
+//			builder.append(i);//for a nice print
+//			builder.append(". ");
+//			builder.append(answer.toString());
+//			i++;
+//		}
 		builder.append("\n");
 		return builder.toString();
 	}
@@ -126,7 +130,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 			numCorrect++;
 		}
 		
-		return answers.add(ansToAdd);
+		return answers.addAnswer(ansToAdd);
 	}
 
 	/**
@@ -136,6 +140,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	 * @return whether the answer was deleted
 	 */
 	//TODO: figure out how to resolve id
+	@Deprecated
 	public boolean deleteAnswerById(int id) {
 		if(answers.isEmpty())
 			return false;
@@ -144,14 +149,15 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 		if(ans != null && ans.isCorrect())
 			numCorrect--;
 		
-		return answers.remove(ans);
+		return false;//answers.remove(ans);
 	}
 	
+	@Deprecated
 	public Answer getAnswerById(int id) {		
-		for(Answer answer : answers) {
-			if(answer.getId() == id)
-				return answer;
-		}
+//		for(Answer answer : answers) {
+//			if(answer.getId() == id)
+//				return answer;
+//		}
 		return null;
 	}
 
@@ -203,7 +209,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 			input.nextLine();
 			
 			if (selection != -1)
-				answerExist = multiQue.deleteAnswerById(selection);
+				answerExist = multiQue.getAnswers().deleteQuestion(selection);
 
 			if (!answerExist)
 				System.out.println("Error! Answer dosen't exist!");
@@ -219,15 +225,16 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	public String getSolution() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(super.getSolution());
-		builder.append("\n");
-
-		int i = 1;
-		for (Solutionable answer : answers) {
-			builder.append(i);//for a nice print
-			builder.append(". ");
-			builder.append(answer.getSolution());
-			i++;
-		}
+		builder.append(answers.getSolution());
+//		builder.append("\n");
+//
+//		int i = 1;
+//		for (Solutionable answer : answers) {
+//			builder.append(i);//for a nice print
+//			builder.append(". ");
+//			builder.append(answer.getSolution());
+//			i++;
+//		}
 		builder.append("\n");
 		return builder.toString();
 	}
