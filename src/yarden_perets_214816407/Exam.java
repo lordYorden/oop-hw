@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public abstract class Exam implements Examable {
@@ -50,17 +49,16 @@ public abstract class Exam implements Examable {
 		return questions.addQuestion(queToAdd);
 	}
 
-	public boolean addQuestion(MultiSelectQuestion queToAdd, Repo repo)
+	public boolean addQuestion(MultiSelectQuestion queToAdd, DefualtAnswers defaults)
 			throws NumOfAnswersException, NumOfQuestionsException {
 		int numCorrect = queToAdd.getNumCorrect();
-		ArrayList<Answer> defaults = repo.generateDefaultAnswers((numCorrect == 0), (numCorrect > 1));
 
 		int numOfAns = queToAdd.getNumAnswers();
 		if (numOfAns < MIN_ANSWERS_PER_QUESTION)
 			throw new NumOfAnswersException(numOfAns);
 
-		queToAdd.addAnswer(defaults.get(0));
-		queToAdd.addAnswer(defaults.get(1));
+		queToAdd.addAnswer(defaults.getNoneCorrect((numCorrect == 0)));
+		queToAdd.addAnswer(defaults.getMoreThenOneCorrect((numCorrect > 1)));
 		return addQuestion((Question) queToAdd);
 	}
 

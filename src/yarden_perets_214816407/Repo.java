@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 //import java.util.Scanner;
 
-public class Repo implements Serializable {
+public class Repo implements Serializable, DefualtAnswers{
 
 	public static final int REPO_VERSION = 4;//define the project version
 	
@@ -199,6 +199,7 @@ public class Repo implements Serializable {
 	 * @return Both answers objects
 	 */
 	//TODO: update comment
+	@Deprecated
 	public ArrayList<Answer> generateDefaultAnswers(boolean noneCorrect, boolean moreThenOneCorrect) {
 		ArrayList<Answer> defaults = new ArrayList<>();
 		Answer temp = new Answer(getAnswerById(0));
@@ -225,6 +226,20 @@ public class Repo implements Serializable {
 
 	public QuestionManager getQuestions() {
 		return questions;
+	}
+
+	@Override
+	public Answer getNoneCorrect(boolean noneCorrect) {
+		Answer temp = new Answer(getAnswerById(0));
+		temp.setCorrect(noneCorrect);
+		return temp;
+	}
+
+	@Override
+	public Answer getMoreThenOneCorrect(boolean moreThenOneCorrect) {
+		Answer temp = new Answer(getAnswerById(1));
+		temp.setCorrect(moreThenOneCorrect);
+		return temp;
 	}
 	
 }
