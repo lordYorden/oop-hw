@@ -3,7 +3,7 @@ package yarden_perets_214816407;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Answer implements Serializable, Solutionable{
+public class Answer implements Serializable, Solutionable, Comparable<Integer>{
 	/**
 	 * 
 	 */
@@ -109,6 +109,12 @@ public class Answer implements Serializable, Solutionable{
 		builder.append(isCorrect ? "x" : " ");
 		builder.append("]\n");
 		return builder.toString();
+	}
+
+
+	@Override
+	public int compareTo(Integer id) {
+		return this.id - id;
 	}
 
 }
