@@ -79,3 +79,8 @@ Changes are described per Breach
 
 * Not only you could have used only ID before to find a Answer, both Repo and MultiSelectQuestion Contained a collection of Answers that basaicly did the same thing.
 * Breached priciples that were fixed (1, 2).
+
+### Question and Answers Manager got a new Geric Abstract class ElementManager
+
+* When updating the Class Digram i noticed both AnswersManager and QuestionManager has basicly the same members and function then i remembered Generics is a thing so I added the ElementManager, i also changed function that requires AnswerManager or QuestionManager to use ElementManager.
+* Breached priciples that were fixed (2, 5).

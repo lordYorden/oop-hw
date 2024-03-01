@@ -1,5 +1,4 @@
 package yarden_perets_214816407;
-import java.util.Comparator;
 import java.util.LinkedHashSet;
 
 public class AnswerManager extends ElementManager<Answer>{
@@ -15,7 +14,7 @@ public class AnswerManager extends ElementManager<Answer>{
 		super(answers);
 	}
 	
-	public AnswerManager(AnswerManager answerManager) {
+	public AnswerManager(ElementManager<Answer> answerManager) {
 		this(answerManager.elements);
 	}
 
@@ -32,24 +31,6 @@ public class AnswerManager extends ElementManager<Answer>{
 				return curr;
 		}
 		return null;
-	}
-	
-	@Deprecated
-	//for other types like string
-	public Answer getQuestion(Object key, Comparator<Object> comparator) {
-		for (Answer curr : elements) {
-			if (comparator.compare(curr, key) == 0)
-				return curr;
-		}
-		return null;
-	}
-	
-	@Deprecated
-	//no delete in answers
-	public boolean deleteQuestion(int key) {
-		if(elements.isEmpty())
-			return false;
-		return elements.remove(getElement(key));
 	}
 	
 	@Override

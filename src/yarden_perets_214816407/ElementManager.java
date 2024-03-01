@@ -71,11 +71,6 @@ public abstract class ElementManager<E> implements Serializable, Solutionable, I
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(elements);
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

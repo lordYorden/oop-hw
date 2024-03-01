@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public abstract class Exam implements Examable {
 	private String date;
-	protected /*QuestionManager*/ ElementManager<Question> questions; 
+	protected ElementManager<Question> questions; 
 	private boolean displaySolution;
 	public static int maxQuestionCapacity = 10;
 	protected int maxNumQue;

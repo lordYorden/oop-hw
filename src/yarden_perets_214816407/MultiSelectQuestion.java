@@ -10,7 +10,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	 * 
 	 */
 	private static final long serialVersionUID = Repo.REPO_VERSION;
-	private AnswerManager/*LinkedHashSet<Answer>*/ answers;
+	private ElementManager<Answer> answers;
 	private int numCorrect;
 	public static final int maxAnswersCpacity = 10;
 
@@ -44,16 +44,8 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 			addAnswer(answer);
 		}
 	}
-
-	/**
-	 * @return the question's possible answers
-	 */
-//	@Deprecated
-//	public LinkedHashSet<Answer> getAnswers() {
-//		//return answers;
-//	}
 	
-	public AnswerManager getAnswers() {
+	public ElementManager<Answer> getAnswers() {
 		return answers;
 	}
 
@@ -131,34 +123,6 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 		}
 		
 		return answers.addElement(ansToAdd);
-	}
-
-	/**
-	 * deletes an answer
-	 * 
-	 * @param index answer to be deleted
-	 * @return whether the answer was deleted
-	 */
-	//TODO: figure out how to resolve id
-	@Deprecated
-	public boolean deleteAnswerById(int id) {
-		if(answers.isEmpty())
-			return false;
-		
-		Answer ans = getAnswerById(id);
-		if(ans != null && ans.isCorrect())
-			numCorrect--;
-		
-		return false;//answers.remove(ans);
-	}
-	
-	@Deprecated
-	public Answer getAnswerById(int id) {		
-//		for(Answer answer : answers) {
-//			if(answer.getId() == id)
-//				return answer;
-//		}
-		return null;
 	}
 
 	@Override

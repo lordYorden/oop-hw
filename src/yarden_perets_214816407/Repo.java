@@ -1,7 +1,6 @@
 package yarden_perets_214816407;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 //import java.util.Arrays;
@@ -18,8 +17,8 @@ public class Repo implements Serializable, DefualtAnswers{
 		Math, Science, History, Geography
 	}
 
-	private AnswerManager answers;
-	private QuestionManager questions;
+	private ElementManager<Answer> answers;
+	private ElementManager<Question> questions;
 	private Subject subject;
 
 	/**
@@ -52,33 +51,8 @@ public class Repo implements Serializable, DefualtAnswers{
 		return addAnswer(newAns);
 	}
 
-	public AnswerManager getAnswers() {
+	public ElementManager<Answer> getAnswers() {
 		return answers;
-	}
-
-	/**
-	 * @return the numAnswers
-	 */
-	@Deprecated
-	public int getNumAnswers() {
-		return answers.size();
-	}
-
-	/**
-	 * Checks if the index entered is valid then return null/The question based on
-	 * it
-	 * 
-	 * @param index The answer index
-	 * @return The answer object
-	 */
-	//TODO: update comment
-	@Deprecated
-	public Answer getAnswerById(int id) {		
-//		for(Answer answer : answers) {
-//			if(answer.getId() == id)
-//				return answer;
-//		}
-		return null;
 	}
 
 	/**
@@ -191,29 +165,11 @@ public class Repo implements Serializable, DefualtAnswers{
 
 		return ans;
 	}
-
-	/**
-	 * Public helper method Generates new answers objects of the default answers
-	 * based of question data provided
-	 * 
-	 * @param noneCorrect        The boolean field of first default answers
-	 * @param moreThenOneCorrect The boolean field of second default answers
-	 * @return Both answers objects
-	 */
-	//TODO: update comment
-	@Deprecated
-	public ArrayList<Answer> generateDefaultAnswers(boolean noneCorrect, boolean moreThenOneCorrect) {
-		ArrayList<Answer> defaults = new ArrayList<>();
-		Answer temp = new Answer(getAnswerById(0));
-		temp.setCorrect(noneCorrect);
-		
-		defaults.add(temp);
-		
-		temp = new Answer(getAnswerById(1));
-		temp.setCorrect(moreThenOneCorrect);
-		defaults.add(temp);
-		
-		return defaults;
+	
+	public void clear() {
+		questions.clear();
+		answers.clear();
+		Question.setNumQuestions(0);
 	}
 
 	@Override
@@ -226,7 +182,7 @@ public class Repo implements Serializable, DefualtAnswers{
 		return questions.equals(other.questions);
 	}
 
-	public QuestionManager getQuestions() {
+	public ElementManager<Question> getQuestions() {
 		return questions;
 	}
 

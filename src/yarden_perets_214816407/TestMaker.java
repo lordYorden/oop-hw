@@ -109,7 +109,7 @@ public class TestMaker {
 	 * @throws IOException
 	 * @throws NumOfAnswersException
 	 */
-	public static void generateTest(Repo repo) throws IOException {
+	public static boolean generateTest(Repo repo) throws IOException {
 		int numQue = 0;
 
 		do {
@@ -129,13 +129,13 @@ public class TestMaker {
 		try {
 			if (isAuto) {
 				exam = new AutomaticExam(numQue);
-				//System.out.println("is auto");
 			} else {
 				exam = new MenualExam(numQue, input);
 			}
 
 		} catch (NumOfQuestionsException e) {
 			System.out.println("Error! " + e.getMessage());
+			return false;
 		}
 
 		exam.createExam(repo);
@@ -145,6 +145,7 @@ public class TestMaker {
 		System.out.println("Test written seccefully you can find it in " + examPath);
 		System.out.println("Press any key to continue...");
 		System.in.read();
+		return true;
 	}
 
 	/**

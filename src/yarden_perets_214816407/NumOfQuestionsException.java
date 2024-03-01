@@ -10,7 +10,7 @@ public class NumOfQuestionsException extends ExamCreationException {
 	private int limit;
 
 	public NumOfQuestionsException(int numOfQuestions) {
-		super("Failed to create the Exam bequse the number of questions " + numOfQuestions
+		super("Failed to create the Exam becuase the number of questions " + numOfQuestions
 				+ " exceed the limitation of 10 questions per Exam!");
 		this.setNumOfQuestions(numOfQuestions);
 		this.setLimit(10);
