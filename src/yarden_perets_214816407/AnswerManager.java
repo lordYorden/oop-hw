@@ -1,70 +1,58 @@
 package yarden_perets_214816407;
-
-import java.io.Serializable;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 
-public class AnswerManager implements Serializable, Solutionable, Iterable<Answer>{
+public class AnswerManager extends ElementManager<Answer>{
 	
-	private LinkedHashSet<Answer> answers;
+	//private LinkedHashSet<Answer> answers;
 	private static final long serialVersionUID = Repo.REPO_VERSION;
 	
 	public AnswerManager() {
-		this.answers = new LinkedHashSet<>();
+		super();
 	}
 	
 	public AnswerManager(LinkedHashSet<Answer> answers) {
-		this.answers = new LinkedHashSet<>(answers);
+		super(answers);
 	}
 	
 	public AnswerManager(AnswerManager answerManager) {
-		this(answerManager.answers);
+		this(answerManager.elements);
 	}
 
-	public boolean addAnswer(Answer ansToAdd) {
+	@Override
+	public boolean addElement(Answer ansToAdd) {
 		Answer newAns = new Answer(ansToAdd);
-		return answers.add(newAns);
+		return elements.add(newAns);
 	}
-
-//	public boolean addAnswer(String ansToAdd) {	
-//		Answer newAns = new Answer(ansToAdd, false); //Default
-//		newAns.setId(answers.size());
-//		return answers.add(newAns);
-//	}
 	
-	public Answer getAnswer(int id) {		
-		for(Answer curr : answers) {
-			if(curr.compareTo(id) == 0)
+	@Override
+	public Answer getElement(int key) {		
+		for(Answer curr : elements) {
+			if(curr.compareTo(key) == 0)
 				return curr;
 		}
 		return null;
 	}
 	
-	public int size() {
-		return answers.size();
-	}
-	
+	@Deprecated
 	//for other types like string
 	public Answer getQuestion(Object key, Comparator<Object> comparator) {
-		for (Answer curr : answers) {
+		for (Answer curr : elements) {
 			if (comparator.compare(curr, key) == 0)
 				return curr;
 		}
 		return null;
 	}
 	
+	@Deprecated
 	//no delete in answers
 	public boolean deleteQuestion(int key) {
-		if(answers.isEmpty())
+		if(elements.isEmpty())
 			return false;
-		return answers.remove(getAnswer(key));
-	}
-		
-	public boolean isEmpty() {
-		return answers.isEmpty();
+		return elements.remove(getElement(key));
 	}
 	
+	@Override
 	public String toString(){
 		StringBuilder builder = new StringBuilder();
 		
@@ -72,7 +60,7 @@ public class AnswerManager implements Serializable, Solutionable, Iterable<Answe
 //			builder.append(answer.toString());
 //		}
 		int i = 1;
-		for (Answer answer : answers) {
+		for (Answer answer : elements) {
 			builder.append(i);//for a nice print
 			builder.append(". ");
 			builder.append(answer.toString());
@@ -91,21 +79,12 @@ public class AnswerManager implements Serializable, Solutionable, Iterable<Answe
 		builder.append("\n");
 
 		int i = 1;
-		for (Solutionable answer : answers) {
+		for (Solutionable answer : elements) {
 			builder.append(i);//for a nice print
 			builder.append(". ");
 			builder.append(answer.getSolution());
 			i++;
 		}
 		return builder.toString();
-	}
-	
-	public void clear() {
-		answers.clear();
-	}
-	
-	@Override
-	public Iterator<Answer> iterator() {
-		return answers.iterator();
 	}
 }

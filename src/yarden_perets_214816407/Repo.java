@@ -44,7 +44,7 @@ public class Repo implements Serializable, DefualtAnswers{
 	 */
 	public boolean addAnswer(Answer ansToAdd) {	
 		ansToAdd.setId(answers.size()); //update id based on repo
-		return answers.addAnswer(ansToAdd);
+		return answers.addElement(ansToAdd);
 	}
 	
 	public boolean addAnswer(String ansToAdd) {	
@@ -144,17 +144,17 @@ public class Repo implements Serializable, DefualtAnswers{
 	 * @param repo the program's repository
 	 * @return the question that was selected
 	 */
-	public static Question selectQuestionFromRepo(Repo repo, Scanner input) {
+	public static Question selectQuestionFromRepo(ElementManager<Question> questions, Scanner input) {
 		// Scanner input = new Scanner(System.in);
 		Question que = null;
 		int selection = 0;
 
 		do {
-			System.out.print(repo);
+			System.out.print(questions);
 			System.out.println("Select a question: ");
 			selection = input.nextInt();
 			input.nextLine();
-			que = repo.questions.getQuestion(selection);
+			que = questions.getElement(selection);
 
 			if (que == null)
 				System.out.println("Error! Question dosen't exist!");
@@ -182,7 +182,7 @@ public class Repo implements Serializable, DefualtAnswers{
 			if(selection <= 1) //Defaults
 				ans = null;
 			else
-				ans = repo.getAnswers().getAnswer(selection);
+				ans = repo.getAnswers().getElement(selection);
 
 			if (ans == null)
 				System.out.println("Error! Answer dosen't exist!");
@@ -232,7 +232,7 @@ public class Repo implements Serializable, DefualtAnswers{
 
 	@Override
 	public Answer getNoneCorrect(boolean noneCorrect) {
-		Answer temp = new Answer(answers.getAnswer(0));
+		Answer temp = new Answer(answers.getElement(0));
 		temp.setId(answers.size()); //need to be in lower priority from all other answers
 		temp.setCorrect(noneCorrect);
 		return temp;
@@ -240,7 +240,7 @@ public class Repo implements Serializable, DefualtAnswers{
 
 	@Override
 	public Answer getMoreThenOneCorrect(boolean moreThenOneCorrect) {
-		Answer temp = new Answer(answers.getAnswer(1));
+		Answer temp = new Answer(answers.getElement(1));
 		temp.setId(answers.size()); //need to be in lower priority from all other answers
 		temp.setCorrect(moreThenOneCorrect);
 		return temp;

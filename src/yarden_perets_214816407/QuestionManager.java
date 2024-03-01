@@ -1,24 +1,21 @@
 package yarden_perets_214816407;
-
-import java.io.Serializable;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 
-public class QuestionManager implements Serializable, Solutionable{
+public class QuestionManager extends ElementManager<Question>{
 	
-	private LinkedHashSet<Question> questions;
+	//private LinkedHashSet<Question> questions;
 	private static final long serialVersionUID = Repo.REPO_VERSION;
 	
 	public QuestionManager() {
-		this.questions = new LinkedHashSet<>();
+		super();
 	}
 
-	public boolean addQuestion(Question queToAdd) { 
-		return questions.add(queToAdd);
+	public boolean addElement(Question queToAdd) { 
+		return elements.add(queToAdd);
 	}
 	
-	public Question getQuestion(int key) {
-		for (Question curr : questions) {
+	public Question getElement(int key) {
+		for (Question curr : elements) {
 			if (curr.compareTo(key) == 0){
 				return curr;
 			}
@@ -26,44 +23,43 @@ public class QuestionManager implements Serializable, Solutionable{
 		return null;
 	}
 	
+	@Deprecated
 	//for other types like string
-	public Question getQuestion(Object key, Comparator<Object> comparator) {
-		for (Question curr : questions) {
+	public Question getElement(Object key, Comparator<Object> comparator) {
+		for (Question curr : elements) {
 			if (comparator.compare(curr, key) == 0)
 				return curr;
 		}
 		return null;
 	}
 	
-	
+	@Deprecated
 	public boolean deleteQuestion(int key) {
-		if(questions.isEmpty())
+		if(elements.isEmpty())
 			return false;
-		return questions.remove(getQuestion(key));
+		return elements.remove(getElement(key));
 	}
 	
+	@Deprecated
 	public int getNumQuestions() {
-		return questions.size();
+		return elements.size();
 	}
 	
-	public boolean isEmpty() {
-		return questions.isEmpty();
-	}
-	
-	public String toString(){
-		StringBuilder builder = new StringBuilder();
-		
-		for(Question question : questions) {
-			builder.append(question.toString());
-		}
-		return builder.toString();
-	}
+//	@Override
+//	public String toString(){
+//		StringBuilder builder = new StringBuilder();
+//		
+//		for(Question question : elements) {
+//			builder.append(question.toString());
+//		}
+//		return builder.toString();
+//	}
 
 	@Override
 	public String getSolution() {
 		StringBuilder builder = new StringBuilder();
 		
-		for(Solutionable question : questions) {
+		for(Solutionable question : elements) {
 			builder.append(question.getSolution());
 		}
 		return builder.toString();

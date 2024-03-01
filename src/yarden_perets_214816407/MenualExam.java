@@ -11,8 +11,8 @@ public class MenualExam extends Exam {
 	}
 
 	@Override
-	public Question getQuestion(Repo repo) {
-		Question fromRepo = Repo.selectQuestionFromRepo(repo, input);
+	public Question getQuestion(ElementManager<Question> questions, ElementManager<Answer> answers) {
+		Question fromRepo = Repo.selectQuestionFromRepo(questions, input);
 		if(fromRepo == null){
 			System.out.println("Error! Somthing went worng while Adding question!");
 			return null;

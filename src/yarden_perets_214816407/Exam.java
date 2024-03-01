@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public abstract class Exam implements Examable {
 	private String date;
-	protected /*LinkedHashSet<Question>*/QuestionManager questions; 
+	protected /*QuestionManager*/ ElementManager<Question> questions; 
 	private boolean displaySolution;
 	public static int maxQuestionCapacity = 10;
 	protected int maxNumQue;
@@ -40,13 +40,13 @@ public abstract class Exam implements Examable {
 	 * @throws NumOfQuestionsException
 	 */
 	public boolean addQuestion(Question queToAdd) throws NumOfQuestionsException {
-		if (questions.getNumQuestions() >= maxNumQue) {
-			throw new NumOfQuestionsException(questions.getNumQuestions() + 1, maxNumQue);
+		if (questions.size() >= maxNumQue) {
+			throw new NumOfQuestionsException(questions.size() + 1, maxNumQue);
 			// System.out.println("Error! No more question could be added, reached full
 			// capacity");
 		}
 
-		return questions.addQuestion(queToAdd);
+		return questions.addElement(queToAdd);
 	}
 
 	public boolean addQuestion(MultiSelectQuestion queToAdd, DefualtAnswers defaults)
@@ -107,7 +107,7 @@ public abstract class Exam implements Examable {
 	public void createExam(Repo repo) {
 		
 		for (int i = 0; i < maxNumQue; i++) {
-			Question que = getQuestion(repo);
+			Question que = getQuestion(repo.getQuestions(), repo.getAnswers());
 			if(que != null) {
 				
 				if(que instanceof MultiSelectQuestion)
@@ -116,7 +116,7 @@ public abstract class Exam implements Examable {
 					this.addQuestion(que);
 			}
 			
-			if(que == null || questions.getNumQuestions() != i+1) 
+			if(que == null || questions.size() != i+1) 
 			{
 				i--;// didn't find question or duplicate
 			}

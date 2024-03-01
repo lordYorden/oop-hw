@@ -13,22 +13,22 @@ public class AutomaticExam extends Exam {
 		this.generated = new HashSet<>();
 	}
 	
-	public Answer generateAnswerFromRepo(boolean isCorrect, AnswerManager answers) {
+	public Answer generateAnswerFromRepo(boolean isCorrect, ElementManager<Answer> answers) {
 		
 		int genAnsId = rnd.nextInt(answers.size() - 2) + 1; // not include default answers
-		Answer ans = answers.getAnswer(genAnsId);
+		Answer ans = answers.getElement(genAnsId);
 		ans = new Answer(ans);
 		ans.setCorrect(isCorrect);
 		return ans;	
 	}
 
 	@Override
-	public Question getQuestion(Repo repo) {
-		QuestionManager questionManager = repo.getQuestions();
-		int maxRange = questionManager.getNumQuestions();
+	public Question getQuestion(ElementManager<Question> questions, ElementManager<Answer> answers) {
+		//QuestionManager questionManager = repo.getQuestions();
+		int maxRange = questions.size();
 		
 		int genQue = rnd.nextInt(maxRange);
-		Question questionSelected = questionManager.getQuestion(genQue);
+		Question questionSelected = questions.getElement(genQue);
 		if(questionSelected == null){
 			return null;
 		}
@@ -44,7 +44,7 @@ public class AutomaticExam extends Exam {
 				Answer ans = null;
 				boolean wasGen = false;
 				do {
-					ans = generateAnswerFromRepo(j == correctIndex, repo.getAnswers());
+					ans = generateAnswerFromRepo(j == correctIndex, answers);
 					wasGen = generated.contains(ans);
 					if(!wasGen) {
 						generated.add(ans);

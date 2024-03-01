@@ -130,7 +130,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 			numCorrect++;
 		}
 		
-		return answers.addAnswer(ansToAdd);
+		return answers.addElement(ansToAdd);
 	}
 
 	/**
@@ -209,7 +209,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 			input.nextLine();
 			
 			if (selection != -1)
-				answerExist = multiQue.getAnswers().deleteQuestion(selection);
+				answerExist = multiQue.getAnswers().deleteElement(selection);
 
 			if (!answerExist)
 				System.out.println("Error! Answer dosen't exist!");
