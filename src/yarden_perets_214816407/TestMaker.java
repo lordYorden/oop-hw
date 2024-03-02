@@ -45,7 +45,7 @@ public class TestMaker {
 
 			switch (selction) {
 			case 1: {
-				System.out.print(repo);
+				System.out.println(repo);
 				break;
 			}
 			case 2: {
@@ -73,7 +73,7 @@ public class TestMaker {
 				break;
 			}
 			case EXIT: {
-				saveRepo(repo);
+				//saveRepo(repo);
 				System.out.println("Goodbye!");
 				break;
 			}
@@ -156,9 +156,15 @@ public class TestMaker {
 	private static void deleteQuestion(Repo repo) {
 		boolean questionExist = false;
 		int id = 0;
+		
+		if(repo.getQuestions().isEmpty()) {
+			System.out.println("Error! No questions to remove!");
+			return;
+		}
 
 		do {
 			System.out.println(repo.toString());
+			
 			System.out.println("Select an Question to remove: ");
 			id = input.nextInt();
 			input.nextLine();
@@ -198,7 +204,7 @@ public class TestMaker {
 	 */
 	public static void appendAnswerToQuestion(Repo repo) {
 		Question que = Repo.selectQuestionFromRepo(repo.getQuestions(), input);
-		Answer ans = Repo.selectAnswerFromRepo(repo, input);
+		Answer ans = Repo.selectAnswerFromRepo(repo.getAnswers(), input);
 
 		if (!(que instanceof MultiSelectQuestion)) {
 			System.out.println("Error! That's not a Multi Select Question, Can't add answers!");
@@ -271,10 +277,10 @@ public class TestMaker {
 	}
 	
 	private static boolean addQuestion(Repo repo, MultiSelectQuestion que) 
-	{
+	{			
 		boolean res = repo.getQuestions().addElement(que);
 		if(res) {
-			for (Answer answer : que) {
+			for (Answer answer : que.getAnswers()) {
 				repo.addAnswer(answer);
 			}
 		}

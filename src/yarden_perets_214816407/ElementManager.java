@@ -55,6 +55,9 @@ public abstract class ElementManager<E> implements Serializable, Solutionable, I
 	@Override
 	public String toString(){
 		StringBuilder builder = new StringBuilder();
+		if (elements.isEmpty()) {
+			return "Nothing has been added!\n";
+		}
 		
 		for(E element : elements) {
 			builder.append(element.toString());

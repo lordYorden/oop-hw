@@ -20,6 +20,9 @@ public class AnswerManager extends ElementManager<Answer>{
 
 	@Override
 	public boolean addElement(Answer ansToAdd) {
+		if(elements.contains(ansToAdd))
+			return false;
+		
 		Answer newAns = new Answer(ansToAdd);
 		return elements.add(newAns);
 	}

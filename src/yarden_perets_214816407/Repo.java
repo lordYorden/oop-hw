@@ -1,6 +1,7 @@
 package yarden_perets_214816407;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.Scanner;
 
 //import java.util.Arrays;
@@ -61,8 +62,8 @@ public class Repo implements Serializable, DefualtAnswers{
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 
-		if (questions.isEmpty())
-			return "There are no question in the repo!\n";
+//		if (questions.isEmpty())
+//			return "There are no question in the repo!\n";
 
 		builder.append("Subject: ");
 		builder.append(subject.name());
@@ -94,6 +95,7 @@ public class Repo implements Serializable, DefualtAnswers{
 	/**
 	 * @return object values
 	 */
+	@Deprecated
 	public String toStringAnswers() {
 		StringBuilder builder = new StringBuilder();
 
@@ -144,19 +146,28 @@ public class Repo implements Serializable, DefualtAnswers{
 	 * @param repo the program's repository
 	 * @return the answers that was selected
 	 */
-	public static Answer selectAnswerFromRepo(Repo repo, Scanner input) {
+	public static Answer selectAnswerFromRepo(ElementManager<Answer> answers, Scanner input) {
 		Answer ans = null;
 		int selection = 0;
 
 		do {
-			System.out.print(repo.toStringAnswers());
+			System.out.println("Answers in the repo: \n");
+			
+			Iterator<Answer> it = answers.iterator();
+			
+			while(it.hasNext()) {
+				ans = it.next();
+				//ans.setDisplaySolution(false);
+				System.out.printf("ID: %d\n%s\n",ans.getId(), ans);
+			}
+			
 			System.out.println("Select an answer: ");
 			selection = input.nextInt();
 			
 			if(selection <= 1) //Defaults
 				ans = null;
 			else
-				ans = repo.getAnswers().getElement(selection);
+				ans = answers.getElement(selection);
 
 			if (ans == null)
 				System.out.println("Error! Answer dosen't exist!");

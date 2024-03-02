@@ -83,7 +83,7 @@ public class Answer implements Serializable, Solutionable, Comparable<Integer>{
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(text);
+		return Objects.hash(text, id);
 	}
 
 
@@ -97,7 +97,7 @@ public class Answer implements Serializable, Solutionable, Comparable<Integer>{
 		if (getClass() != obj.getClass())
 			return false;
 		Answer other = (Answer) obj;
-		return Objects.equals(text, other.text);
+		return Objects.equals(text, other.text) && id == other.id;
 	}
 
 

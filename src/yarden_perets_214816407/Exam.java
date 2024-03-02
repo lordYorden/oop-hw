@@ -11,9 +11,8 @@ public abstract class Exam implements Examable {
 	private String date;
 	protected ElementManager<Question> questions; 
 	private boolean displaySolution;
-	public static int maxQuestionCapacity = 10;
+	public static final int MAX_QUESTION_CAPACITY = 10;
 	protected int maxNumQue;
-	
 	public static final int MIN_ANSWERS_PER_QUESTION = 4;
 
 	/**
@@ -23,7 +22,7 @@ public abstract class Exam implements Examable {
 	 * @throws NumOfQuestionsException
 	 */
 	public Exam(int maxNumQue) throws NumOfQuestionsException {
-		if (maxNumQue > maxQuestionCapacity)
+		if (maxNumQue > MAX_QUESTION_CAPACITY)
 			throw new NumOfQuestionsException(maxNumQue);
 
 		questions = new QuestionManager();
@@ -53,7 +52,7 @@ public abstract class Exam implements Examable {
 			throws NumOfAnswersException, NumOfQuestionsException {
 		int numCorrect = queToAdd.getNumCorrect();
 
-		int numOfAns = queToAdd.getNumAnswers();
+		int numOfAns = queToAdd.getAnswers().size();
 		if (numOfAns < MIN_ANSWERS_PER_QUESTION)
 			throw new NumOfAnswersException(numOfAns);
 
@@ -122,5 +121,8 @@ public abstract class Exam implements Examable {
 			}
 		}
 	}
+	
+	@Override
+	public abstract Question getQuestion(ElementManager<Question> questions, ElementManager<Answer> answers);
 
 }
