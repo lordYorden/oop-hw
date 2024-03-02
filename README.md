@@ -1,6 +1,6 @@
 # Objetc Oriented Design - hw2
 
-This is my hw1 base on my project in the OOP course
+This is my hw2 base on my project in the OOP course
 
 The project is on GitHub if you prefer
 in the [Feature/fix-SOLID-breaches](https://github.com/lordYorden/oop-hw/tree/Feature/fix-SOLID-breaches) branch
