@@ -14,10 +14,6 @@ public class Repo implements Serializable, DefualtAnswers{
 	
 	private static final long serialVersionUID = REPO_VERSION;
 
-	public enum Subject {
-		Math, Science, History, Geography
-	}
-
 	private ElementManager<Answer> answers;
 	private ElementManager<Question> questions;
 	private Subject subject;

@@ -10,7 +10,7 @@ public abstract class Question implements Serializable, Comparable<Integer>, Sol
 	 */
 	private static final long serialVersionUID = Repo.REPO_VERSION;
 
-	public enum Difficulty {Easy, Moderate, Hard}
+	//public enum Difficulty {Easy, Moderate, Hard}
 	private static int numQuestions = 1;
 	protected String text;
 	protected int id;
