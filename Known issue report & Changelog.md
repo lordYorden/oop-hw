@@ -84,3 +84,9 @@ Changes are described per Breach
 
 * When updating the Class Digram i noticed both AnswersManager and QuestionManager has basicly the same members and function then i remembered Generics is a thing so I added the ElementManager, i also changed function that requires AnswerManager or QuestionManager to use ElementManager.
 * Breached priciples that were fixed (2, 5, 3).
+
+
+## Classes that didn't change 
+- ExamCreationException
+- NumOfAnswersException
+- NumOfQuestionsException

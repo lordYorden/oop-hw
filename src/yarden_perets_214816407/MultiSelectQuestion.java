@@ -122,13 +122,14 @@ public class MultiSelectQuestion extends Question implements Serializable {
 			selection = input.nextInt();
 			input.nextLine();
 			
-			if (selection != -1)
+			if (selection != -1) {
 				answerExist = multiQue.getAnswers().deleteElement(selection);
+			}
 
 			if (!answerExist)
 				System.out.println("Error! Answer dosen't exist!");
 
-		} while (selection != -1 || !answerExist);
+		} while (selection != -1 /* && !answerExist */);
 		
 		if(answers.size() < Exam.MIN_ANSWERS_PER_QUESTION) {
 			throw new NumOfAnswersException(answers.size());
