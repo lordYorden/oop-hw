@@ -99,7 +99,7 @@ public class MultiSelectQuestion extends Question implements Serializable {
 		return answers.addElement(ansToAdd);
 	}
 
-	public static void deleteAnswersFromAQuestion(MultiSelectQuestion multiQue, Scanner input){
+	public static void deleteAnswersFromAQuestion(MultiSelectQuestion multiQue, Scanner input) throws NumOfAnswersException{
 		ElementManager<Answer> answers = multiQue.getAnswers();
 		boolean answerExist = true;
 		int selection = 0;

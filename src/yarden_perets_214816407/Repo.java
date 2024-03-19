@@ -27,8 +27,8 @@ public class Repo implements Serializable, DefualtAnswers{
 		this.answers = new AnswerManager();
 		this.questions = new QuestionManager();
 		this.subject = subject;
-		addAnswer("No answer is correct"); // answers[0]
-		addAnswer("More then one answer is correct"); // answers[1]
+		AnswerFactory.createAnswer("No answer is correct", false); // answers[0]
+		AnswerFactory.createAnswer("More then one answer is correct", false); // answers[1]
 	}
 
 	/**
@@ -43,10 +43,10 @@ public class Repo implements Serializable, DefualtAnswers{
 		return answers.addElement(ansToAdd);
 	}
 	
-	public boolean addAnswer(String ansToAdd) {	
-		Answer newAns = new Answer(ansToAdd, false); //Default
-		return addAnswer(newAns);
-	}
+//	public boolean addAnswer(String ansToAdd) {	
+//		Answer newAns = new Answer(ansToAdd, false); //Default
+//		return addAnswer(newAns);
+//	}
 
 	public ElementManager<Answer> getAnswers() {
 		return answers;
@@ -195,7 +195,7 @@ public class Repo implements Serializable, DefualtAnswers{
 
 	@Override
 	public Answer getNoneCorrect(boolean noneCorrect) {
-		Answer temp = new Answer(answers.getElement(0));
+		Answer temp = AnswerFactory.createAnswer(answers.getElement(0));
 		temp.setId(answers.size()); //need to be in lower priority from all other answers
 		temp.setCorrect(noneCorrect);
 		return temp;
@@ -203,7 +203,7 @@ public class Repo implements Serializable, DefualtAnswers{
 
 	@Override
 	public Answer getMoreThenOneCorrect(boolean moreThenOneCorrect) {
-		Answer temp = new Answer(answers.getElement(1));
+		Answer temp = AnswerFactory.createAnswer(answers.getElement(1));
 		temp.setId(answers.size()); //need to be in lower priority from all other answers
 		temp.setCorrect(moreThenOneCorrect);
 		return temp;

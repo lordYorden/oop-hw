@@ -8,8 +8,8 @@ public class AutomaticExam extends Exam {
 	private final static Random rnd = new Random();
 	private HashSet<Answer> generated;
 	
-	public AutomaticExam(int maxNumQue) throws NumOfQuestionsException {
-		super(maxNumQue);
+	public AutomaticExam(int maxNumQue, int numQuestions) throws NumOfQuestionsException {
+		super(maxNumQue, numQuestions);
 		this.generated = new HashSet<>();
 	}
 	
@@ -17,7 +17,7 @@ public class AutomaticExam extends Exam {
 		
 		int genAnsId = rnd.nextInt(answers.size() - 2) + 1; // not include default answers
 		Answer ans = answers.getElement(genAnsId);
-		ans = new Answer(ans);
+		ans = AnswerFactory.createAnswer(ans);
 		ans.setCorrect(isCorrect);
 		return ans;	
 	}
@@ -33,8 +33,10 @@ public class AutomaticExam extends Exam {
 			return null;
 		}
 		
+		Question toAdd = QuestionFactory.createQuestion(questionSelected);
+		
 		if (questionSelected instanceof MultiSelectQuestion) {
-			MultiSelectQuestion multiGen = new MultiSelectQuestion((MultiSelectQuestion) questionSelected);
+			MultiSelectQuestion multiGen = (MultiSelectQuestion) toAdd;//new MultiSelectQuestion((MultiSelectQuestion) questionSelected);
 			multiGen.clear();
 
 			// generate 4 answers
@@ -52,11 +54,9 @@ public class AutomaticExam extends Exam {
 				} while (wasGen);
 				multiGen.addAnswer(ans);
 			}
-			
-			return multiGen; //new Multi select
 		}
 		
-		return (Question) new OpenEndedQuestion((OpenEndedQuestion) questionSelected); //new open ended
+		return toAdd;
 	}
 
 }

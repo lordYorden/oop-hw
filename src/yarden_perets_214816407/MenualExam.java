@@ -5,36 +5,41 @@ public class MenualExam extends Exam {
 
 	private Scanner input;
 	
-	public MenualExam(int maxNumQue, Scanner input) throws NumOfQuestionsException {
-		super(maxNumQue);
+	public MenualExam(int maxNumQue, int numQuestions, Scanner input) throws NumOfQuestionsException {
+		super(maxNumQue, numQuestions);
 		this.input = input;
 	}
 
 	@Override
 	public Question getQuestion(ElementManager<Question> questions, ElementManager<Answer> answers) {
+		ExamMakerFacade facade = ExamMakerFacade.getInstance();
+		if(!facade.isLoaded())
+			return null;
+		
 		Question fromRepo = Repo.selectQuestionFromRepo(questions, input);
 		if(fromRepo == null){
 			System.out.println("Error! Somthing went worng while Adding question!");
 			return null;
 		}
 
-		if (fromRepo instanceof MultiSelectQuestion) {
-			MultiSelectQuestion toAdd = new MultiSelectQuestion((MultiSelectQuestion) fromRepo);
-
-			try {
-				MultiSelectQuestion.deleteAnswersFromAQuestion(toAdd, input);
-			} catch (NumOfAnswersException e) {
-				System.out.println("Error! " + e.getMessage());
-				System.out.println("Press any key to continue...");
-				input.nextLine();
-				return null;
-			}
-			
-			return toAdd; //new Multi select
+		Question toAdd = QuestionFactory.createQuestion(fromRepo);
+		
+		if (fromRepo instanceof MultiSelectQuestion) {		
+			facade.removeAnswersFromQuestion(toAdd);
+//			try {
+//				MultiSelectQuestion.deleteAnswersFromAQuestion(toAdd, input);
+//			} catch (NumOfAnswersException e) {
+//				System.out.println("Error! " + e.getMessage());
+//				System.out.println("Press any key to continue...");
+//				input.nextLine();
+//				return null;
+//			}
+//			
+//			return toAdd; //new Multi select
 		}
 		
-		return new OpenEndedQuestion((OpenEndedQuestion) fromRepo); //new open ended
-	}
+		return toAdd;/*new OpenEndedQuestion((OpenEndedQuestion) fromRepo); //new open ended
+*/	}
 			
 
 }

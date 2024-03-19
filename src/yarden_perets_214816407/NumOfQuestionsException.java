@@ -18,7 +18,7 @@ public class NumOfQuestionsException extends ExamCreationException {
 
 	public NumOfQuestionsException(int numOfQuestions, int limit) {
 		super("Failed to add question to the Exam becuase the number of questions " + numOfQuestions
-				+ " exceed the limitation of " + limit + " questions! ");
+				+ " exceed the limit of " + limit + " questions! ");
 		this.setNumOfQuestions(numOfQuestions);
 		this.setLimit(limit);
 

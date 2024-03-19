@@ -8,7 +8,7 @@ public class TestMaker {
 	public static void main(String[] args) throws IOException {
 
 		Subject subject = Subject.getSubjectFromUser(input);
-		ExamMakerFacade facade = new ExamMakerFacade();
+		ExamMakerFacade facade = ExamMakerFacade.getInstance();
 		final int EXIT = -1;
 		int selction = 0;
 		
@@ -27,27 +27,27 @@ public class TestMaker {
 				break;
 			}
 			case 2: {
-				facade.addAnswer();
+				addAnswer();
 				break;
 			}
 			case 3: {
-				facade.appendAnswerToQuestion();
+				appendAnswerToQuestion();
 				break;
 			}
 			case 4: {
-				facade.addQuestion();
+				addQuestion();
 				break;
 			}
 			case 5: {
-				facade.deleteAnswerFromAQuestion();
+				deleteAnswerFromAQuestion();
 				break;
 			}
 			case 6: {
-				facade.deleteQuestion();
+				deleteQuestion();
 				break;
 			}
 			case 7: {
-				facade.generateTest();
+				generateTest();
 				break;
 			}
 			case EXIT: {
@@ -61,198 +61,168 @@ public class TestMaker {
 
 		facade.save();
 	}
+	
+	/**
+	 * Generate a test based on user input and writes it into a solution and exam
+	 * files
+	 * 
+	 * @param repo the program's repository
+	 * @throws IOException
+	 * @throws NumOfAnswersException
+	 */
+	public static void generateTest() throws IOException {
+		ExamMakerFacade facade = ExamMakerFacade.getInstance();
+		if(!facade.isLoaded())
+			return;
+		
+		int numQue = 0;
 
-//	private static Repo loadRepo(Subject subject) throws FileNotFoundException, IOException, ClassNotFoundException {
-//		String filename = subject.name() + ".db";
-//		ObjectInputStream toLoad = new ObjectInputStream(new FileInputStream(filename));
-//		Repo repo = (Repo) toLoad.readObject();
-//		toLoad.close();
-//		Question.setNumQuestions(repo.getQuestions().size() + 1);
-//		return repo;
-//	}
+		do {
+			System.out.println("How many question would be in the test? ");
+			numQue = input.nextInt();
+			input.nextLine();
+
+			if (numQue <= 0)
+				System.out.println("Error! Invalid number, Please try again!");
+
+		} while (numQue <= 0);
+
+		System.out.println("Do you want to generate the exam automatically? (true/false)");
+		boolean isAuto = input.nextBoolean();
+		
+		try {
+			String examPath = facade.generateTest(numQue, isAuto);
+			System.out.println("Test written seccefully you can find it in " + examPath);
+			System.out.println("Press any key to continue...");
+			System.in.read();
+		}catch (NumOfQuestionsException e) {
+			System.out.println("Error! " + e.getMessage());
+		}
+		
+		return;
+
+	}
+
+	/**
+	 * Ask the user to user to select a question and then deletes it from the repo
+	 * 
+	 * @param repo the program's repository
+	 */
+	private static void deleteQuestion() {
+		boolean questionExist = false;
+		int id = 0;
+		
+		ExamMakerFacade facade = ExamMakerFacade.getInstance();
+		if(!facade.isLoaded())
+			return;
+		
+		if(facade.isQuestionsEmpty()) {
+			System.out.println("Error! No questions to remove!");
+			return;
+		}
+
+		do {
+			System.out.println(facade);
+			
+			System.out.println("Select an Question to remove: ");
+			id = input.nextInt();
+			input.nextLine();
+			questionExist = facade.deleteQuestion(id);
+
+			if (!questionExist)
+				System.out.println("Error! Question dosen't exist!");
+
+		} while (!questionExist);
+
+	}
 //
-//	private static void saveRepo(Repo repo) throws FileNotFoundException, IOException {
-//		String filename = repo.getSubject().name() + ".db";
-//		ObjectOutputStream toSave = new ObjectOutputStream(new FileOutputStream(filename));
-//		toSave.writeObject(repo);
-//		toSave.close();
-//	}
-//
-//	/**
-//	 * Generate a test based on user input and writes it into a solution and exam
-//	 * files
-//	 * 
-//	 * @param repo the program's repository
-//	 * @throws IOException
-//	 * @throws NumOfAnswersException
-//	 */
-//	public static boolean generateTest(Repo repo) throws IOException {
-//		int numQue = 0;
-//
-//		do {
-//			System.out.println("How many question would be in the test? ");
-//			numQue = input.nextInt();
-//			input.nextLine();
-//
-//			if (numQue <= 0)
-//				System.out.println("Error! Invalid number, Please try again!");
-//
-//		} while (numQue <= 0);
-//
-//		System.out.println("Do you want to generate the exam automatically? (true/false)");
-//		boolean isAuto = input.nextBoolean();
-//
-//		Exam exam = null;
-//		try {
-//			if (isAuto) {
-//				exam = new AutomaticExam(numQue);
-//			} else {
-//				exam = new MenualExam(numQue, input);
-//			}
-//
-//		} catch (NumOfQuestionsException e) {
-//			System.out.println("Error! " + e.getMessage());
-//			return false;
-//		}
-//
-//		exam.createExam(repo);
-//
-//		exam.writeExam(true); // write solution
-//		String examPath = exam.writeExam(false); // write exam
-//		System.out.println("Test written seccefully you can find it in " + examPath);
-//		System.out.println("Press any key to continue...");
-//		System.in.read();
-//		return true;
-//	}
-//
-//	/**
-//	 * Ask the user to user to select a question and then deletes it from the repo
-//	 * 
-//	 * @param repo the program's repository
-//	 */
-//	private static void deleteQuestion(Repo repo) {
-//		boolean questionExist = false;
-//		int id = 0;
-//		
-//		if(repo.getQuestions().isEmpty()) {
-//			System.out.println("Error! No questions to remove!");
-//			return;
-//		}
-//
-//		do {
-//			System.out.println(repo.toString());
-//			
-//			System.out.println("Select an Question to remove: ");
-//			id = input.nextInt();
-//			input.nextLine();
-//			questionExist = repo.getQuestions().deleteElement(id);
-//
-//			if (!questionExist)
-//				System.out.println("Error! Question dosen't exist!");
-//
-//		} while (!questionExist);
-//
-//	}
-//
-//	/**
-//	 * Ask the user to user to select a question the an answer from the question and
-//	 * removes it from the question's possible answers
-//	 * 
-//	 * @param repo the program's repository
-//	 */
-//	private static void deleteAnswerFromAQuestion(Repo repo) {
-//		Question que = Repo.selectQuestionFromRepo(repo.getQuestions(), input);
-//
-//		if (!(que instanceof MultiSelectQuestion)) {
-//			System.out.println("Error! Can't remove answers from a non Amercian Question!");
-//			return;
-//		}
-//
-//		MultiSelectQuestion multiQue = (MultiSelectQuestion) que;
-//		MultiSelectQuestion.deleteAnswersFromAQuestion(multiQue, input);
-//
-//	}
-//
-//	/**
-//	 * Ask the user to user to select a question and an answer from the repo then
-//	 * adds the answer to the question's possible answers
-//	 * 
-//	 * @param repo the program's repository
-//	 */
-//	public static void appendAnswerToQuestion(Repo repo) {
-//		Question que = Repo.selectQuestionFromRepo(repo.getQuestions(), input);
-//		Answer ans = Repo.selectAnswerFromRepo(repo.getAnswers(), input);
-//
-//		if (!(que instanceof MultiSelectQuestion)) {
-//			System.out.println("Error! That's not a Multi Select Question, Can't add answers!");
-//			return;
-//		}
-//
-//		System.out.println("Is the answers youv'e picked correct? (true/false): ");
-//		boolean isCorrect = input.nextBoolean();
-//		
-//		ans = new Answer(ans);
-//		ans.setCorrect(isCorrect);
-//
-//		boolean res = ((MultiSelectQuestion) que).addAnswer(ans);
-//
-//		if (!res)
-//			System.out.println("Error! An Error aacured while adding the question! Might be duplicate answer or Full Capcity reached!");
-//
-//	}
-//
-//	/**
-//	 * Asks the user for a question and adds it to the repo
-//	 * 
-//	 * @param repo the program's repository
-//	 */
-//	private static void addQuestion(Repo repo) {
-//		String text = "";
-//		// boolean res = false;
-//		Question que = null;
-//		boolean isValid = false;
-//		int selction = 0;
-//
-//		do {
-//			do {
-//
-//				System.out.println("Select a question type: ");
-//				System.out.println("1. Multi-Selction question");
-//				System.out.println("2. Open-Ended question");
-//				selction = input.nextInt();
-//				input.nextLine();
-//
-//				selction--;
-//				isValid = selction >= 0 && selction < 2;
-//
-//				if (!isValid) {
-//					System.out.println("Error! Type dosen't exist, Try again!");
-//				}
-//
-//			} while (!isValid);
-//
-//			System.out.println("Enter a question: ");
-//			text = input.nextLine();
-//			Difficulty diff = Difficulty.getDifficultyFromUser(input);
-//
-//			if (selction != 0) {
-//				System.out.println("Enter The school solution: ");
-//				String solution = input.nextLine();// inputPargraph(input);
-//				que = new OpenEndedQuestion(text, solution, diff);
-//				isValid = addQuestion(repo, (OpenEndedQuestion)que);
-//
-//			} else {
-//				que = new MultiSelectQuestion(text, diff);
-//				isValid = addQuestion(repo, (MultiSelectQuestion)que);
-//			}
-//
-//			if (!isValid)
-//				System.out.println("An error occurred while creating the question! Please try again!");
-//
-//		} while (!isValid);
-//
-//	}
-//	
+	/**
+	 * Ask the user to user to select a question the an answer from the question and
+	 * removes it from the question's possible answers
+	 * 
+	 * @param repo the program's repository
+	 */
+	private static void deleteAnswerFromAQuestion() {
+		ExamMakerFacade facade = ExamMakerFacade.getInstance();
+		if(!facade.isLoaded())
+			return;
+		
+		Question que = facade.selectQuestion();
+		facade.removeAnswersFromQuestion(que);
+
+	}
+
+	/**
+	 * Ask the user to user to select a question and an answer from the repo then
+	 * adds the answer to the question's possible answers
+	 * 
+	 * @param repo the program's repository
+	 */
+	public static void appendAnswerToQuestion() {
+		
+		ExamMakerFacade facade = ExamMakerFacade.getInstance();
+		if(!facade.isLoaded())
+			return;
+		
+		Question que = facade.selectQuestion();
+		Answer ans = facade.selectAnswer();
+		
+		System.out.println("Is the answers youv'e picked correct? (true/false): ");
+		boolean isCorrect = input.nextBoolean();
+
+		if (!(que instanceof MultiSelectQuestion)) {
+			System.out.println("Error! That's not a Multi Select Question, Can't add answers!");
+			return;
+		}
+
+
+		
+		ans = new Answer(ans);
+		ans.setCorrect(isCorrect);
+
+		boolean res = ((MultiSelectQuestion) que).addAnswer(ans);
+
+		if (!res)
+			System.out.println("Error! An Error aacured while adding the question! Might be duplicate answer or Full Capcity reached!");
+
+	}
+
+	/**
+	 * Asks the user for a question and adds it to the repo
+	 * 
+	 * @param repo the program's repository
+	 */
+	private static void addQuestion() {
+		String text = "";
+		boolean isValid = true;
+
+		do {
+			
+			QuestionType type = QuestionType.getQuestionTypeFromUser(input);
+			Difficulty diff = Difficulty.getDifficultyFromUser(input);
+			
+			System.out.println("Enter a question: ");
+			text = input.nextLine();
+			
+			String solution = null;
+			if(type == QuestionType.OpenEnded) {
+				System.out.println("Enter The school solution: ");
+				solution = input.nextLine();// inputPargraph(input);
+			}
+			
+			try {
+				if(QuestionFactory.createQuestion(type, diff, text, solution) == null) {
+					isValid = false; //not possible but i still checked
+				}
+			}catch (RuntimeException e) {
+				System.out.println(e.getMessage());
+				isValid =false;
+			}
+			
+		}while(!isValid);
+
+	}
+	
 //	private static boolean addQuestion(Repo repo, MultiSelectQuestion que) 
 //	{			
 //		boolean res = repo.getQuestions().addElement(que);
@@ -272,27 +242,36 @@ public class TestMaker {
 //			repo.addAnswer(que.getAnswer());
 //		return res;
 //	}
-//
-//	/**
-//	 * Asks the user for an answers and adds it to the repo
-//	 * 
-//	 * @param repo the program's repository
-//	 */
-//	private static void addAnswer(Repo repo) {
+
+	/**
+	 * Asks the user for an answers and adds it to the repo
+	 * 
+	 * @param repo the program's repository
+	 */
+	private static void addAnswer() {
+		ExamMakerFacade facade = ExamMakerFacade.getInstance();
+		if(!facade.isLoaded())
+			return;
+		
+		System.out.println("Enter an answer: ");
+		String newAnswer = input.nextLine();
+		facade.addAnswer(AnswerFactory.createAnswer(newAnswer, false));
+		
+		
+		
 //		boolean res = true;
 //		String newAnswer = "";
 //
 //		do {
-//			System.out.println("Enter an answer: ");
-//			newAnswer = input.nextLine();
+
 //			res = repo.addAnswer(newAnswer);
 //
 //			if (!res)
 //				System.out.println("Error! Answer already exists!");
 //
 //		} while (!res);
-//
-//	}
+
+	}
 
 	/**
 	 * Adds the hard codded questions to the repo

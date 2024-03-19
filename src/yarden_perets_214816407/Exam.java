@@ -21,9 +21,11 @@ public abstract class Exam implements Examable {
 	 * @param maxNumQue max number of question in test
 	 * @throws NumOfQuestionsException
 	 */
-	public Exam(int maxNumQue) throws NumOfQuestionsException {
+	public Exam(int maxNumQue, int numQuestion) throws NumOfQuestionsException {
 		if (maxNumQue > MAX_QUESTION_CAPACITY)
 			throw new NumOfQuestionsException(maxNumQue);
+		else if(maxNumQue > numQuestion)
+			throw new NumOfQuestionsException(maxNumQue, numQuestion);
 
 		questions = new QuestionManager();
 		this.maxNumQue = maxNumQue;

@@ -23,8 +23,8 @@ public class AnswerManager extends ElementManager<Answer>{
 		if(elements.contains(ansToAdd))
 			return false;
 		
-		Answer newAns = new Answer(ansToAdd);
-		return elements.add(newAns);
+		//Answer newAns = new Answer(ansToAdd);
+		return elements.add(ansToAdd);
 	}
 	
 	@Override
