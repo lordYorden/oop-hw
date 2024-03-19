@@ -45,7 +45,7 @@ public class TestMaker {
 
 			switch (selction) {
 			case 1: {
-				System.out.print(repo);
+				System.out.println(repo);
 				break;
 			}
 			case 2: {
@@ -73,7 +73,7 @@ public class TestMaker {
 				break;
 			}
 			case EXIT: {
-				saveRepo(repo);
+				//saveRepo(repo);
 				System.out.println("Goodbye!");
 				break;
 			}
@@ -90,7 +90,7 @@ public class TestMaker {
 		ObjectInputStream toLoad = new ObjectInputStream(new FileInputStream(filename));
 		Repo repo = (Repo) toLoad.readObject();
 		toLoad.close();
-		Question.setNumQuestions(repo.getNumQuestions() + 1);
+		Question.setNumQuestions(repo.getQuestions().size() + 1);
 		return repo;
 	}
 
@@ -109,7 +109,7 @@ public class TestMaker {
 	 * @throws IOException
 	 * @throws NumOfAnswersException
 	 */
-	public static void generateTest(Repo repo) throws IOException {
+	public static boolean generateTest(Repo repo) throws IOException {
 		int numQue = 0;
 
 		do {
@@ -129,13 +129,13 @@ public class TestMaker {
 		try {
 			if (isAuto) {
 				exam = new AutomaticExam(numQue);
-				//System.out.println("is auto");
 			} else {
 				exam = new MenualExam(numQue, input);
 			}
 
 		} catch (NumOfQuestionsException e) {
 			System.out.println("Error! " + e.getMessage());
+			return false;
 		}
 
 		exam.createExam(repo);
@@ -145,6 +145,7 @@ public class TestMaker {
 		System.out.println("Test written seccefully you can find it in " + examPath);
 		System.out.println("Press any key to continue...");
 		System.in.read();
+		return true;
 	}
 
 	/**
@@ -155,13 +156,19 @@ public class TestMaker {
 	private static void deleteQuestion(Repo repo) {
 		boolean questionExist = false;
 		int id = 0;
+		
+		if(repo.getQuestions().isEmpty()) {
+			System.out.println("Error! No questions to remove!");
+			return;
+		}
 
 		do {
 			System.out.println(repo.toString());
+			
 			System.out.println("Select an Question to remove: ");
 			id = input.nextInt();
 			input.nextLine();
-			questionExist = repo.deleteQuestionById(id);
+			questionExist = repo.getQuestions().deleteElement(id);
 
 			if (!questionExist)
 				System.out.println("Error! Question dosen't exist!");
@@ -177,7 +184,7 @@ public class TestMaker {
 	 * @param repo the program's repository
 	 */
 	private static void deleteAnswerFromAQuestion(Repo repo) {
-		Question que = Repo.selectQuestionFromRepo(repo, input);
+		Question que = Repo.selectQuestionFromRepo(repo.getQuestions(), input);
 
 		if (!(que instanceof MultiSelectQuestion)) {
 			System.out.println("Error! Can't remove answers from a non Amercian Question!");
@@ -185,7 +192,7 @@ public class TestMaker {
 		}
 
 		MultiSelectQuestion multiQue = (MultiSelectQuestion) que;
-		MultiSelectQuestion.deleteAnswerFromAQuestion(multiQue, input);
+		MultiSelectQuestion.deleteAnswersFromAQuestion(multiQue, input);
 
 	}
 
@@ -196,8 +203,8 @@ public class TestMaker {
 	 * @param repo the program's repository
 	 */
 	public static void appendAnswerToQuestion(Repo repo) {
-		Question que = Repo.selectQuestionFromRepo(repo, input);
-		Answer ans = Repo.selectAnswerFromRepo(repo, input);
+		Question que = Repo.selectQuestionFromRepo(repo.getQuestions(), input);
+		Answer ans = Repo.selectAnswerFromRepo(repo.getAnswers(), input);
 
 		if (!(que instanceof MultiSelectQuestion)) {
 			System.out.println("Error! That's not a Multi Select Question, Can't add answers!");
@@ -270,10 +277,10 @@ public class TestMaker {
 	}
 	
 	private static boolean addQuestion(Repo repo, MultiSelectQuestion que) 
-	{
-		boolean res = repo.addQuestion(que);
+	{			
+		boolean res = repo.getQuestions().addElement(que);
 		if(res) {
-			for (Answer answer : que) {
+			for (Answer answer : que.getAnswers()) {
 				repo.addAnswer(answer);
 			}
 		}
@@ -283,9 +290,9 @@ public class TestMaker {
 	private static boolean addQuestion(Repo repo, OpenEndedQuestion que) 
 	{
 
-		boolean res = repo.addQuestion(que);
+		boolean res = repo.getQuestions().addElement(que);
 		if(res)
-			repo.addAnswer(que.getSolution());
+			repo.addAnswer(que.getAnswer());
 		return res;
 	}
 

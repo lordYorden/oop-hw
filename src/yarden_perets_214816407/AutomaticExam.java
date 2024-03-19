@@ -12,78 +12,51 @@ public class AutomaticExam extends Exam {
 		super(maxNumQue);
 		this.generated = new HashSet<>();
 	}
-
-	@Override
-	public void createExam(Repo repo) {
-		int maxRange = repo.getNumQuestions();
-		int genQue = 0;
-		for (int i = 0; i < maxNumQue; i++) {
-			
-			genQue = rnd.nextInt(maxRange);
-			Question questionSelected = repo.getQuestionByID(genQue);
-			if (questionSelected instanceof OpenEndedQuestion) {
-
-				try {
-					this.addQuestion((Question) new OpenEndedQuestion((OpenEndedQuestion) questionSelected));
-				} catch (NumOfQuestionsException e) {
-					System.out.println("Error! " + e);
-				}
-
-			} else if (questionSelected instanceof MultiSelectQuestion) {
-				MultiSelectQuestion multiGen = new MultiSelectQuestion((MultiSelectQuestion) questionSelected);
-				multiGen.clear();
-
-				// generate 4 answers
-				int genAns = 0;
-				int numAnswers = repo.getNumAnswers();
-
-				int correctIndex = rnd.nextInt(4);
-				generated = new HashSet<>();
-				for (int j = 0; j < 4; j++) {
-					Answer ans = null;
-					boolean wasGen = false;
-					do {
-						genAns = rnd.nextInt(numAnswers - 2) + 1; // not include default answers
-						ans = repo.getAnswerById(genAns);
-						ans = new Answer(ans);
-						ans.setCorrect(correctIndex == j);
-						wasGen = generated.contains(ans);
-						if(!wasGen) {
-							generated.add(ans);
-						}
-					} while (wasGen);
-					
-					multiGen.addAnswer(ans);
-				}
-				
-				try {
-					this.addQuestion(multiGen, repo);
-				} catch (NumOfAnswersException | NumOfQuestionsException e) {
-					System.out.println("Error! " + e);
-				}
-			}
-			
-			if(!generated.isEmpty())
-				generated.clear();
-
-			
-			if(questions.size() != i+1) 
-			{
-				i--;// didn't find question or duplicate
-			}
-		}
-
+	
+	public Answer generateAnswerFromRepo(boolean isCorrect, ElementManager<Answer> answers) {
+		
+		int genAnsId = rnd.nextInt(answers.size() - 2) + 1; // not include default answers
+		Answer ans = answers.getElement(genAnsId);
+		ans = new Answer(ans);
+		ans.setCorrect(isCorrect);
+		return ans;	
 	}
 
-	@SuppressWarnings("unused")
-	@Deprecated
-	private boolean wasGenerated(String[] generated, String question) {
-		for (int i = 0; i < generated.length; i++) {
-			if (generated[i] != null && generated[i].equals(question)) {
-				return true;
-			}
+	@Override
+	public Question getQuestion(ElementManager<Question> questions, ElementManager<Answer> answers) {
+		//QuestionManager questionManager = repo.getQuestions();
+		int maxRange = questions.size();
+		
+		int genQue = rnd.nextInt(maxRange);
+		Question questionSelected = questions.getElement(genQue);
+		if(questionSelected == null){
+			return null;
 		}
-		return false;
+		
+		if (questionSelected instanceof MultiSelectQuestion) {
+			MultiSelectQuestion multiGen = new MultiSelectQuestion((MultiSelectQuestion) questionSelected);
+			multiGen.clear();
+
+			// generate 4 answers
+			int correctIndex = rnd.nextInt(MIN_ANSWERS_PER_QUESTION);
+			generated = new HashSet<>();
+			for (int j = 0; j < MIN_ANSWERS_PER_QUESTION; j++) {
+				Answer ans = null;
+				boolean wasGen = false;
+				do {
+					ans = generateAnswerFromRepo(j == correctIndex, answers);
+					wasGen = generated.contains(ans);
+					if(!wasGen) {
+						generated.add(ans);
+					}
+				} while (wasGen);
+				multiGen.addAnswer(ans);
+			}
+			
+			return multiGen; //new Multi select
+		}
+		
+		return (Question) new OpenEndedQuestion((OpenEndedQuestion) questionSelected); //new open ended
 	}
 
 }

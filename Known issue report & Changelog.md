@@ -40,80 +40,53 @@ Press any key to continue...
 - The Solution will be in the same folder with the same name (For example):
   Solution_2024_02_12_18_13.txt
 
-## Changelog
+## SOLID Priciples
 
-Changes are described per Class
+1) Single Responsibility Principle
+2) Open/Closed Principle
+3) Liskov Substitution Principle
+4) Interface Segregation Principle
+5) Dependency Inversion Principle
 
-### Answer
+## Changelog and Breaches
 
-- changed answer to be id based **[effected lines: 10, 20, ,25-37, 45, 47 and 111]**
-- added a  `serialVersionUID` based on `Repo.REPO_VERSION` **[line 10]**
-- added `hashCode()` and changed `equals()` to the fit the New `Answer` type **[effected lines: 94-111]**
+Changes are described per Breach
 
-### AutomaticExam
+### Answer, Question (And its children) Got Inteface Solutionable
 
-moved the `generated` to be a member of the class and changed it to a `HashSet<Answer>` as a result i Depracted the wasGenrated function beacuse the HashSet already checks it **[effected lines: 43-58, 80, 74]**
+- by containg a displaySolution method and member instead (that used get and set) instead of an Abstruction layer that returns A String with the solution details.
+- berched priciples that were fixed (1, 2, and 5).
 
-### Exam
+### Repo, Exam got a new Member, QuestionManger, Question is now Comparable By Id (as a default, Comperator as an Option)
 
-- added `Exam.MIN_ANSWERS_PER_QUESTION` and changed the condition accordingly **[effected lines: 20, 62]**
-- changed question to use a `LinkedHashSet` instead of an array, used linked to keep the order of insertion. Added `Exam.maxQuestionCapacity` **[effected lines: 19-35, 47-53]**
-- changed `repo.generateDefaultAnswers()` to return an `ArrayList` **[Effected lines: 59-66]**
-- changed `toString()` to use **Itertor** (foreach) instead of for. **[Effected lines: 75-78]**
-- changed the class `Equals()` method to the **HashSet** **[Effected lines: 100-109]**
+- Not only you could have used only ID before to find a Question, both Repo and Exam Contained a collection of Questions that basaicly did the same thing.
+- Breached priciples that were fixed (1, 2).
 
-### MenualExam
+### Updated the Examable Inteface
 
-- moved `deleteAnswerFromAQuestion()` to be a **Static** function in `MultiSelectQuestion` **[line: 36, 59]**
-- Added a **Pause massage** to critical Exceptions **[effected lines: 40-41, 47-48, 56]**
-- Added a check for **duplicate question** in exam, Based on a **HashSet** **[Effected lines: 51-56]**
+- Examble has now a method that return A question from repo
+  both AutomaticExam and MenualExam no longer craeted the exam and add questions, Instead the Abstract Class Exam usess the new mehtod to get a question to add, without knowing how.
+- Breached priciples that were fixed (2, 5).
 
-### MultiSelectQuestion
+### Repo got an Interface DefaultAnswers
 
-- Added **Iterator** support for Question and changed it to contain a **HashSet** instead of an Array, added a constructor for `hardCodedQuestions()`
-  **[Effected lines: 9-35, 36-45, 50-66, 99-104 116-148, 170-174]**
-- Added `hashCode()` method and changed `equals()` to fit **HashSet** **[Effected lines: 157-169]**
-- changed `toString()` to an **Iterator** based print.
-- Replaced `deleteAnswerByIndex()` to `deleteAnswerById()` **[Effected lines: 137-147]**
-- move the function `deleteAnswerFromAQuestion()` from **Repo** to be a **Static** member of `MultiSelectQuestion`
-- Added a `serialVersionUID` based on `Repo.REPO_VERSION` **[line 13]**
+> *Name is a work in progress
 
-### OpenEndedQuestion
+- Repo has 2 new methods for the default answers. each of them get a boolean and Returns answer to fit it. Exam now uses it to genarate the default answers for each question.
+- Breaches principle that were fixed (2,5).
 
-- Added `hashCode()` and changed `equals()` to the fit **HashSet** **[effected lines: 36-55]**
-- Added a `serialVersionUID` based on `Repo.REPO_VERSION` **[line 11]**
+### Both MultiSelectQuestion and Repo got a new member, Answer Manager
 
-### Question
+* Not only you could have used only ID before to find a Answer, both Repo and MultiSelectQuestion Contained a collection of Answers that basaicly did the same thing.
+* Breached priciples that were fixed (1, 2).
 
-- Added `hashCode()` and changed `equals()` to the fit **HashSet** **[effected lines: 74-90]**
-- Added a `serialVersionUID` based on `Repo.REPO_VERSION` **[line 12]**
+### Question and Answers Manager got a new Generic Abstract class ElementManager
 
-### TestMaker (Main)
+* When updating the Class Digram i noticed both AnswersManager and QuestionManager has basicly the same members and function then i remembered Generics is a thing so I added the ElementManager, i also changed function that requires AnswerManager or QuestionManager to use ElementManager.
+* Breached priciples that were fixed (2, 5, 3).
 
-- Changed `Scanner input` to be a **Static** member
-  and changed **all** Static methods accordingly.
-  **[effected lines: 15-19, 49-69]**
 
-> also **all** of the Static methods in TestMaker
-
-- Changed `addQuestion()` to fit `SOLID` by spliting it into two overloading methods (For OpenEnded and MultiSelect). **[effected lines: 275,279, 288-311, 470-476]**
-- Changed `addQuestion(Repo, MultiSelectQuestion)` to use Itertor. **[effected lines: 293-298]**
-- chaned `hardCodedQue()` to use **HashSet** instead of Array **[effected lines: 318-519]**
-- Changed `appendAnswerToQuestion()` to check for duplication ana print an error **[effected lines: 198-218]**
-- changed `getDifficultyFromUser()` and `getSubjectFromUser()` to an **ArrayList**. **[effected lines: 565-619]**
-
-### Repo
-
-- Changed `answers` to a **LinkedHashSet** and fitted the functions to `answer.id`
-  **[Effected lines: 47-52, 100-106, 155-119, 267-287]**
-
-> **Efected Functions:**
-> addAnswer(String)
-> getAnswerById(int)
-> deleteQuestionById(int)
-> selectAnswerFromRepo(Repo, Scanner)
-
-- changed `generateDefaultAnswers()` in Repo to use an `ArrayList` **[Effected lines: 298-310]**
-- changes `toString()` and `toStringAnswers()` to use **Iterator** **[Effected lines: 124-140, 166-182]**
-- Changed `questions` to a **LinkedHashSet** **[line: 20, 30]**
-- Added a `serialVersionUID` based on `Repo.REPO_VERSION` **[Effected lines: 15-18]**
+## Classes that didn't change 
+- ExamCreationException
+- NumOfAnswersException
+- NumOfQuestionsException

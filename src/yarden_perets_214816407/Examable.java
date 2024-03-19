@@ -1,7 +1,6 @@
 package yarden_perets_214816407;
 
-import java.io.IOException;
-
 public interface Examable {
-	void createExam(Repo repo) throws IOException;
+	public void createExam(Repo repo);
+	public Question getQuestion(ElementManager<Question> questions, ElementManager<Answer> answers);
 }

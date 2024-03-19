@@ -2,18 +2,16 @@ package yarden_perets_214816407;
 
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Scanner;
 
-public class MultiSelectQuestion extends Question implements Serializable, Iterable<Answer> {
+public class MultiSelectQuestion extends Question implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = Repo.REPO_VERSION;
-	private LinkedHashSet<Answer> answers;
+	private ElementManager<Answer> answers;
 	private int numCorrect;
-	public static final int maxAnswersCpacity = 10;
+	public static final int MAX_ANSWERS_CAPACITY = 10;
 
 	/**
 	 * C'tor
@@ -23,7 +21,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	MultiSelectQuestion(String text, Difficulty difficulty) {
 		super(text, difficulty);
 		this.numCorrect = 0;
-		this.answers = new LinkedHashSet<>();
+		this.answers = new AnswerManager();
 	}
 
 	/**
@@ -34,7 +32,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	MultiSelectQuestion(MultiSelectQuestion other) {
 		super(other.text, other.difficulty);
 		this.numCorrect = other.numCorrect;
-		this.answers = new LinkedHashSet<>(other.answers);
+		this.answers = new AnswerManager(other.answers);
 	}
 
 	//for hard coded questions
@@ -45,12 +43,8 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 			addAnswer(answer);
 		}
 	}
-
-	/**
-	 * @return the question's possible answers
-	 */
-	@Deprecated
-	public LinkedHashSet<Answer> getAnswers() {
+	
+	public ElementManager<Answer> getAnswers() {
 		return answers;
 	}
 
@@ -60,36 +54,11 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	}
 
 	/**
-	 * @return number of possible answers
-	 */
-	public int getNumAnswers() {
-		return answers.size();
-	}
-
-	/**
 	 * @return the number of correct answers
 	 */
 	public int getNumCorrect() {
 		return numCorrect;
 	}
-
-//	/**
-//	 * @param displayAnswers whether to display the answers to every question
-//	 * @return object values
-//	 */
-//	public String toStringSolution() {
-//		StringBuilder builder = new StringBuilder();
-//		builder.append(super.toString());
-//
-//		for (int i = 0; i < numAnswers; i++) {
-//			builder.append("\s\s\s");
-//			builder.append((char)('A'+i));
-//			builder.append(". ");
-//			builder.append(answers[i].toString(true));
-//		}
-//		builder.append("\n");
-//		return builder.toString();
-//	}
 
 	/**
 	 * @return object values
@@ -97,15 +66,15 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append(super.toString());
+		builder.append(answers.toString());
 
-		int i = 1;
-		for (Answer answer : answers) {
-			builder.append(i);//for a nice print
-			builder.append(". ");
-			answer.setDisplaySolution(displaySolution);
-			builder.append(answer.toString());
-			i++;
-		}
+//		int i = 1;
+//		for (Answer answer : answers) {
+//			builder.append(i);//for a nice print
+//			builder.append(". ");
+//			builder.append(answer.toString());
+//			i++;
+//		}
 		builder.append("\n");
 		return builder.toString();
 	}
@@ -118,7 +87,7 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 	 */
 	public boolean addAnswer(Answer ansToAdd) {
 		
-		if (answers.size() >= maxAnswersCpacity) {
+		if (answers.size() >= MAX_ANSWERS_CAPACITY) {
 			return false;// array full
 		}
 		
@@ -127,75 +96,25 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 			numCorrect++;
 		}
 		
-		return answers.add(ansToAdd);
+		return answers.addElement(ansToAdd);
 	}
 
-	/**
-	 * deletes an answer
-	 * 
-	 * @param index answer to be deleted
-	 * @return whether the answer was deleted
-	 */
-	//TODO: figure out how to resolve id
-	public boolean deleteAnswerById(int id) {
-		if(answers.isEmpty())
-			return false;
-		
-		Answer ans = getAnswerById(id);
-		if(ans != null && ans.isCorrect())
-			numCorrect--;
-		
-		return answers.remove(ans);
-	}
-	
-	public Answer getAnswerById(int id) {		
-		for(Answer answer : answers) {
-			if(answer.getId() == id)
-				return answer;
-		}
-		return null;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Objects.hash(answers, numCorrect);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MultiSelectQuestion other = (MultiSelectQuestion) obj;
-		return Objects.equals(answers, other.answers) && numCorrect == other.numCorrect;
-	}
-
-	@Override
-	public Iterator<Answer> iterator() {
-		return answers.iterator();
-	}
-	
-	public static void deleteAnswerFromAQuestion(MultiSelectQuestion multiQue, Scanner input){
+	public static void deleteAnswersFromAQuestion(MultiSelectQuestion multiQue, Scanner input){
+		ElementManager<Answer> answers = multiQue.getAnswers();
 		boolean answerExist = true;
 		int selection = 0;
 		
-		if (multiQue.getNumAnswers() == 0) {
+		if (answers.size() == 0) {
 			System.out.println("Error! No answers to remove!");
 			return;
 		}
 		
 		do {
-			Iterator<Answer> it = multiQue.iterator();
+			Iterator<Answer> it = multiQue.getAnswers().iterator();
 			
 			while(it.hasNext()) {
 				Answer ans = it.next();
-				ans.setDisplaySolution(false);
+				//ans.setDisplaySolution(false);
 				System.out.printf("ID: %d\n%s\n",ans.getId(), ans);
 			}
 			
@@ -203,13 +122,36 @@ public class MultiSelectQuestion extends Question implements Serializable, Itera
 			selection = input.nextInt();
 			input.nextLine();
 			
-			if (selection != -1)
-				answerExist = multiQue.deleteAnswerById(selection);
+			if (selection != -1) {
+				answerExist = multiQue.getAnswers().deleteElement(selection);
+			}
 
 			if (!answerExist)
 				System.out.println("Error! Answer dosen't exist!");
 
-		} while (selection != -1 || !answerExist);
+		} while (selection != -1 /* && !answerExist */);
+		
+		if(answers.size() < Exam.MIN_ANSWERS_PER_QUESTION) {
+			throw new NumOfAnswersException(answers.size());
+		}
+	}
+
+	@Override
+	public String getSolution() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(super.getSolution());
+		builder.append(answers.getSolution());
+//		builder.append("\n");
+//
+//		int i = 1;
+//		for (Solutionable answer : answers) {
+//			builder.append(i);//for a nice print
+//			builder.append(". ");
+//			builder.append(answer.getSolution());
+//			i++;
+//		}
+		builder.append("\n");
+		return builder.toString();
 	}
 
 }

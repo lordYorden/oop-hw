@@ -2,21 +2,17 @@ package yarden_perets_214816407;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.Objects;
 
 public abstract class Exam implements Examable {
 	private String date;
-	protected LinkedHashSet<Question> questions; 
+	protected ElementManager<Question> questions; 
 	private boolean displaySolution;
-	public static int maxQuestionCapacity = 10;
+	public static final int MAX_QUESTION_CAPACITY = 10;
 	protected int maxNumQue;
-	
 	public static final int MIN_ANSWERS_PER_QUESTION = 4;
 
 	/**
@@ -26,13 +22,12 @@ public abstract class Exam implements Examable {
 	 * @throws NumOfQuestionsException
 	 */
 	public Exam(int maxNumQue) throws NumOfQuestionsException {
-		if (maxNumQue > maxQuestionCapacity)
+		if (maxNumQue > MAX_QUESTION_CAPACITY)
 			throw new NumOfQuestionsException(maxNumQue);
 
-		questions = new LinkedHashSet<>();
+		questions = new QuestionManager();
 		this.maxNumQue = maxNumQue;
 		displaySolution = false;
-		//currNumQue = 0;
 		this.date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm"));
 	}
 
@@ -50,20 +45,19 @@ public abstract class Exam implements Examable {
 			// capacity");
 		}
 
-		return questions.add(queToAdd);
+		return questions.addElement(queToAdd);
 	}
 
-	public boolean addQuestion(MultiSelectQuestion queToAdd, Repo repo)
+	public boolean addQuestion(MultiSelectQuestion queToAdd, DefualtAnswers defaults)
 			throws NumOfAnswersException, NumOfQuestionsException {
 		int numCorrect = queToAdd.getNumCorrect();
-		ArrayList<Answer> defaults = repo.generateDefaultAnswers((numCorrect == 0), (numCorrect > 1));
 
-		int numOfAns = queToAdd.getNumAnswers();
+		int numOfAns = queToAdd.getAnswers().size();
 		if (numOfAns < MIN_ANSWERS_PER_QUESTION)
 			throw new NumOfAnswersException(numOfAns);
 
-		queToAdd.addAnswer(defaults.get(0));
-		queToAdd.addAnswer(defaults.get(1));
+		queToAdd.addAnswer(defaults.getNoneCorrect((numCorrect == 0)));
+		queToAdd.addAnswer(defaults.getMoreThenOneCorrect((numCorrect > 1)));
 		return addQuestion((Question) queToAdd);
 	}
 
@@ -71,12 +65,11 @@ public abstract class Exam implements Examable {
 	 * @return object to string
 	 */
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-				
-		for (Question question : questions) {			
-			question.setDisplaySolution(displaySolution);
-			builder.append(question.toString());	
-		}
+		StringBuilder builder = new StringBuilder();	
+		if(displaySolution)
+			builder.append(questions.getSolution());
+		else
+			builder.append(questions.toString());	
 		return builder.toString();
 	}
 
@@ -108,8 +101,28 @@ public abstract class Exam implements Examable {
 		Exam other = (Exam) obj;
 		return maxNumQue == other.maxNumQue && Objects.equals(questions, other.questions);
 	}
-
+	
 	@Override
-	public abstract void createExam(Repo repo) throws IOException;
+	public void createExam(Repo repo) {
+		
+		for (int i = 0; i < maxNumQue; i++) {
+			Question que = getQuestion(repo.getQuestions(), repo.getAnswers());
+			if(que != null) {
+				
+				if(que instanceof MultiSelectQuestion)
+					this.addQuestion((MultiSelectQuestion)que, repo);
+				else
+					this.addQuestion(que);
+			}
+			
+			if(que == null || questions.size() != i+1) 
+			{
+				i--;// didn't find question or duplicate
+			}
+		}
+	}
+	
+	@Override
+	public abstract Question getQuestion(ElementManager<Question> questions, ElementManager<Answer> answers);
 
 }

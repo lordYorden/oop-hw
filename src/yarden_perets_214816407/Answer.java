@@ -3,14 +3,13 @@ package yarden_perets_214816407;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Answer implements Serializable {
+public class Answer implements Serializable, Solutionable, Comparable<Integer>{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = Repo.REPO_VERSION;
 	private String text;
 	private boolean isCorrect;
-	private boolean displaySolution;
 	private int id; //specific for every container
 
 	/**
@@ -23,7 +22,7 @@ public class Answer implements Serializable {
 		this.text = answer;
 		this.id = 0;
 		this.isCorrect = isCorrect;
-		this.displaySolution = false;
+		//this.displaySolution = false;
 	}
 
 
@@ -47,13 +46,6 @@ public class Answer implements Serializable {
 	public Answer(Answer other) {
 		this(other.text, other.isCorrect);
 		this.id = other.id;
-	}
-
-	/**
-	 * @param displaySolution the displaySolution to set
-	 */
-	public void setDisplaySolution(boolean displaySolution) {
-		this.displaySolution = displaySolution;
 	}
 
 	/**
@@ -82,14 +74,7 @@ public class Answer implements Serializable {
 	 */
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		// builder.append("answer: ");
 		builder.append(text);
-		if (displaySolution) {
-			builder.append(" [");
-			builder.append(isCorrect ? "x" : " ");
-			builder.append("]");
-		}
-
 		builder.append("\n");
 		return builder.toString();
 	}
@@ -98,7 +83,7 @@ public class Answer implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(text);
+		return Objects.hash(text, id);
 	}
 
 
@@ -112,7 +97,24 @@ public class Answer implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Answer other = (Answer) obj;
-		return Objects.equals(text, other.text);
+		return Objects.equals(text, other.text) && id == other.id;
+	}
+
+
+	@Override
+	public String getSolution() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(text);
+		builder.append(" [");
+		builder.append(isCorrect ? "x" : " ");
+		builder.append("]\n");
+		return builder.toString();
+	}
+
+
+	@Override
+	public int compareTo(Integer id) {
+		return this.id - id;
 	}
 
 }
