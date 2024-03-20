@@ -1,9 +1,9 @@
-# Objetc Oriented Design - hw2
+# Object Oriented Design - hw3
 
-This is my hw2 base on my project in the OOP course
+This is my hw3 base on my project in the OOP course
 
 The project is on GitHub if you prefer
-in the [Feature/fix-SOLID-breaches](https://github.com/lordYorden/oop-hw/tree/Feature/fix-SOLID-breaches) branch
+in the [Feature/Design-Patterns](https://github.com/lordYorden/oop-hw/tree/Feature/Design-Patterns) branch
 
 ### Submited by
 

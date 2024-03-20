@@ -123,8 +123,5 @@ public abstract class hw3_Exam implements Examable {
 			}
 		}
 	}
-	
-//	@Override
-//	public abstract Question getQuestion(ElementManager<Question> questions, ElementManager<Answer> answers);
 
 }

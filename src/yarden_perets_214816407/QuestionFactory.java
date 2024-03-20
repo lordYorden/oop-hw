@@ -43,4 +43,16 @@ public class QuestionFactory {
 			throw new IllegalArgumentException("Error! No such question!");
 		}
 	}
+	
+	public static MultiSelectQuestion createQuestionWithAnswers(QuestionType type, String text, Difficulty difficulty, Answer[] answers) {
+		MultiSelectQuestion question = (MultiSelectQuestion) createQuestion(type, difficulty, text, null);
+		for (Answer answer : answers) {
+			question.addAnswer(answer);
+		}
+		return question;
+	}
+	
+	public static OpenEndedQuestion createOpenEndedQuestion(QuestionType type, String text, String solution, Difficulty difficulty) {
+		return (OpenEndedQuestion) createQuestion(type, difficulty, text, solution);
+	}
 }

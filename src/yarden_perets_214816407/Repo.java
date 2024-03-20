@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class Repo implements Serializable, DefualtAnswers{
 
-	public static final int REPO_VERSION = 5;//define the project version
+	public static final int REPO_VERSION = 6;//define the project version
 	
 	private static final long serialVersionUID = REPO_VERSION;
 
@@ -27,8 +27,6 @@ public class Repo implements Serializable, DefualtAnswers{
 		this.answers = new AnswerManager();
 		this.questions = new QuestionManager();
 		this.subject = subject;
-		AnswerFactory.createAnswer("No answer is correct", false); // answers[0]
-		AnswerFactory.createAnswer("More then one answer is correct", false); // answers[1]
 	}
 
 	/**
