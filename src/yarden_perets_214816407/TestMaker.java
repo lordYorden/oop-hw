@@ -1,5 +1,7 @@
 package yarden_perets_214816407;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class TestMaker {
@@ -9,55 +11,66 @@ public class TestMaker {
 
 		Subject subject = Subject.getSubjectFromUser(input);
 		ExamMakerFacade facade = ExamMakerFacade.getInstance();
-		final int EXIT = -1;
-		int selction = 0;
+		//final int EXIT = -1;
+		ActionType selction = null;
+		Map<ActionType, ICommand> actions = new HashMap<>();
+		ActionCompleteObserver listener = new MenuActionCompleteListener();
+		
+		actions.put(ActionType.AddAnswer, new AddAnswer(input));
+		actions.put(ActionType.AddQuestion, new AddQuestion(input));
+		actions.put(ActionType.DeleteQuestion, new DeleteQuestion(input));
 		
 		/*
 		 * even restores data by itself
 		*/
 		facade.load(subject); //works even by subject enjoy :)
 		do {
-			printMenu();
-			selction = input.nextInt();
-			input.nextLine();
+			System.out.println("\nWelcome to my Test Maker!");
+			selction = ActionType.getActionTypeFromUser(input);
+//			printMenu();
+//			selction = input.nextInt();
+//			input.nextLine();
 
 			switch (selction) {
-			case 1: {
+			case PrintQuestions: {
 				System.out.println(facade);
 				break;
 			}
-			case 2: {
-				addAnswer();
+			//used as command
+			case AddQuestion:
+			case DeleteQuestion:
+			case AddAnswer:
+				actions.get(selction).execute();
+				listener.update(selction);
 				break;
-			}
-			case 3: {
+			case AppendAnswerToQuestion: {
 				appendAnswerToQuestion();
 				break;
 			}
-			case 4: {
-				addQuestion();
-				break;
-			}
-			case 5: {
+//			case AddQuestion: {
+//				addQuestion();
+//				break;
+//			}
+			case DeleteAnswerFromAQuestion: {
 				deleteAnswerFromAQuestion();
 				break;
 			}
-			case 6: {
-				deleteQuestion();
-				break;
-			}
-			case 7: {
+//			case DeleteQuestion: {
+//				deleteQuestion();
+//				break;
+//			}
+			case GenerateTest: {
 				generateTest();
 				break;
 			}
-			case EXIT: {
+			case Exit: {
 				System.out.println("Goodbye!");
 				break;
 			}
 			default:
 				System.out.println("Error! option dose not exist, Please try again!");
 			}
-		} while (selction != EXIT);
+		} while (selction != ActionType.Exit);
 
 		facade.save();
 	}
@@ -108,6 +121,7 @@ public class TestMaker {
 	 * 
 	 * @param repo the program's repository
 	 */
+	@SuppressWarnings("unused")
 	private static void deleteQuestion() {
 		boolean questionExist = false;
 		int id = 0;
@@ -192,6 +206,7 @@ public class TestMaker {
 	 * 
 	 * @param repo the program's repository
 	 */
+	@SuppressWarnings("unused")
 	private static void addQuestion() {
 		String text = "";
 		boolean isValid = true;
@@ -248,6 +263,7 @@ public class TestMaker {
 	 * 
 	 * @param repo the program's repository
 	 */
+	@SuppressWarnings("unused")
 	private static void addAnswer() {
 		ExamMakerFacade facade = ExamMakerFacade.getInstance();
 		if(!facade.isLoaded())
