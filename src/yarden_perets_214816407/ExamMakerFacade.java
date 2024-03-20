@@ -18,12 +18,16 @@ public class ExamMakerFacade {
         return _instance;
 	}
 	
+	public void setRepoBackup(RepoBackupable repoBackup) {
+		this.repoBackup = repoBackup;
+	}
+
 	private ExamMakerFacade(RepoBackupable repoBackupable) {
 		this.repo = null;
 		this.repoBackup = repoBackupable;
 	}
 	
-	public ExamMakerFacade() {
+	private ExamMakerFacade() {
 		this(new BinaryFileBackup());
 	}
 	

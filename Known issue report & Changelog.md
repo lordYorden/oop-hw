@@ -40,53 +40,36 @@ Press any key to continue...
 - The Solution will be in the same folder with the same name (For example):
   Solution_2024_02_12_18_13.txt
 
-## SOLID Priciples
+## Design Patterns used
 
-1) Single Responsibility Principle
-2) Open/Closed Principle
-3) Liskov Substitution Principle
-4) Interface Segregation Principle
-5) Dependency Inversion Principle
+1) Facade
+2) Factory
+3) Command
+4) Obesrver
+5) Adapter
 
-## Changelog and Breaches
+## Changelog
 
-Changes are described per Breach
+Changes are described per Design Patterns
 
-### Answer, Question (And its children) Got Inteface Solutionable
+### Facade
 
-- by containg a displaySolution method and member instead (that used get and set) instead of an Abstruction layer that returns A String with the solution details.
-- berched priciples that were fixed (1, 2, and 5).
+created a Facade class named **ExamMakerFacade**, repo is accessed only through the facade.
+The save and load of the repo in now in the facaed control using the **RepoBackupable** interface;
 
-### Repo, Exam got a new Member, QuestionManger, Question is now Comparable By Id (as a default, Comperator as an Option)
+### Singelton
 
-- Not only you could have used only ID before to find a Question, both Repo and Exam Contained a collection of Questions that basaicly did the same thing.
-- Breached priciples that were fixed (1, 2).
+I choose the acesses point to be the facade becuase it manages the repo, and is used in the factroy methods to register new questions.
 
-### Updated the Examable Inteface
+### Fcatory
 
-- Examble has now a method that return A question from repo
-  both AutomaticExam and MenualExam no longer craeted the exam and add questions, Instead the Abstract Class Exam usess the new mehtod to get a question to add, without knowing how.
-- Breached priciples that were fixed (2, 5).
-
-### Repo got an Interface DefaultAnswers
-
-> *Name is a work in progress
-
-- Repo has 2 new methods for the default answers. each of them get a boolean and Returns answer to fit it. Exam now uses it to genarate the default answers for each question.
-- Breaches principle that were fixed (2,5).
-
-### Both MultiSelectQuestion and Repo got a new member, Answer Manager
-
-* Not only you could have used only ID before to find a Answer, both Repo and MultiSelectQuestion Contained a collection of Answers that basaicly did the same thing.
-* Breached priciples that were fixed (1, 2).
-
-### Question and Answers Manager got a new Generic Abstract class ElementManager
-
-* When updating the Class Digram i noticed both AnswersManager and QuestionManager has basicly the same members and function then i remembered Generics is a thing so I added the ElementManager, i also changed function that requires AnswerManager or QuestionManager to use ElementManager.
-* Breached priciples that were fixed (2, 5, 3).
+There are 2 types of factrories currently **AnswerFactory** and **QuestionFactory** both register the question/answer in the repo.
+if it is already exist return the existing one. Fcatory uses a new Enum **QuestionType.**
 
 
-## Classes that didn't change 
+
+## Classes that didn't change
+
 - ExamCreationException
 - NumOfAnswersException
 - NumOfQuestionsException
