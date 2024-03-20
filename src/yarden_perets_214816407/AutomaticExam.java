@@ -15,8 +15,12 @@ public class AutomaticExam extends Exam {
 	
 	public Answer generateAnswerFromRepo(boolean isCorrect, ElementManager<Answer> answers) {
 		
-		int genAnsId = rnd.nextInt(answers.size() - 2) + 1; // not include default answers
+		int genAnsId = rnd.nextInt(2, answers.size());// - 2) + 1; // not include default answers
 		Answer ans = answers.getElement(genAnsId);
+		if(ans == null){
+			throw new RuntimeException("Error! Failed to get a random answer!");
+		}
+		
 		ans = AnswerFactory.createAnswer(ans);
 		ans.setCorrect(isCorrect);
 		return ans;	
@@ -40,13 +44,18 @@ public class AutomaticExam extends Exam {
 			multiGen.clear();
 
 			// generate 4 answers
-			int correctIndex = rnd.nextInt(MIN_ANSWERS_PER_QUESTION);
+			int correctIndex = rnd.nextInt(ExamMakerFacade.MIN_ANSWERS_PER_QUESTION);
 			generated = new HashSet<>();
-			for (int j = 0; j < MIN_ANSWERS_PER_QUESTION; j++) {
+			for (int j = 0; j < ExamMakerFacade.MIN_ANSWERS_PER_QUESTION; j++) {
 				Answer ans = null;
 				boolean wasGen = false;
 				do {
+					try {
 					ans = generateAnswerFromRepo(j == correctIndex, answers);
+					}catch(RuntimeException e){
+						wasGen = true;
+						continue;
+					}
 					wasGen = generated.contains(ans);
 					if(!wasGen) {
 						generated.add(ans);

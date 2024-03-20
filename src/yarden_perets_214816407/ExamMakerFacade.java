@@ -10,6 +10,8 @@ public class ExamMakerFacade {
 	private RepoBackupable repoBackup; 
 	private static final Scanner input = new Scanner(System.in); 
 	private static ExamMakerFacade _instance = null;
+	public static final int MAX_QUESTION_CAPACITY = 10;
+	public static final int MIN_ANSWERS_PER_QUESTION = 4;
 	
 	public static ExamMakerFacade getInstance() {
 		if (_instance == null) {

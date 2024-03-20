@@ -131,7 +131,7 @@ public class MultiSelectQuestion extends Question implements Serializable {
 
 		} while (selection != -1 /* && !answerExist */);
 		
-		if(answers.size() < Exam.MIN_ANSWERS_PER_QUESTION) {
+		if(answers.size() < ExamMakerFacade.MIN_ANSWERS_PER_QUESTION) {
 			throw new NumOfAnswersException(answers.size());
 		}
 	}
