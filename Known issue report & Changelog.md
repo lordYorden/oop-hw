@@ -14,10 +14,7 @@ Select a subject:
 
 2) You will get the following menu
 
-- if no questions appear when selecting option 1, Uncomment the `hardCodedQue()` call in main and run it again.
-
 ```
-Select a subject: 
 Welcome to my Test Maker!
 Please select an option: (-1 to exit)
 1. Display all of the question from the repo (and their answers)
@@ -61,15 +58,28 @@ The save and load of the repo in now in the facaed control using the **RepoBacku
 
 I choose the acesses point to be the facade becuase it manages the repo, and is used in the factroy methods to register new questions.
 
-### Fcatory
+### Factory
 
-There are 2 types of factrories currently **AnswerFactory** and **QuestionFactory** both register the question/answer in the repo.
+There are 2 types of factrories currently **AnswerFactory** and **QuestionFactory** both registers {adds to repo using facade singelton} the question/answer in the repo.
 if it is already exist return the existing one. Fcatory uses a new Enum **QuestionType.**
 
+### Command
 
+All commands implements the same interface **ICommand** 
+As the Design Pattern shows. Thay are stored in a Map on main,
+There is a new enum for that named **ActionType**
+##### As of now the menu actions used as commands Are:
+- **AddAnswer**
+- **AddQuestion**
+- **DeleteQuestion**
 
-## Classes that didn't change
+### Observer/Listener
 
-- ExamCreationException
-- NumOfAnswersException
-- NumOfQuestionsException
+As requested there is one Listener **MenuActionCompleteListener** that implemets the **ActionCompleteObserver** Interface which has an Update methods with **ActionType** as its argument. The update method is called in main once the action is finished.
+
+### Adapter
+Changed the **Exam** class to be `hw3_Exam` and using the Adapter Pattern
+created an Adapter class named **Exam** which inherited **hw3_Exam**
+##### Code was changed in:
+- **hw3_Exam** - i couldn't deal with the toString being changed and inside methods. **Effected lines:** [115,117,90,63]
+- **Exam** - new file so **All of it**. 
